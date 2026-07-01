@@ -1,0 +1,28 @@
+# Visual Studio
+.vs/
+.vscode/
+
+# Build
+bin/
+obj/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+packages/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.cache
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
