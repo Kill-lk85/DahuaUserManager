@@ -6,7 +6,6 @@ D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserM
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\MainWindow.g.cs
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\App.g.cs
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI_MarkupCompile.cache
-D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI_MarkupCompile.lref
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\MainWindow.baml
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI.g.resources
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI.GeneratedMSBuildEditorConfig.editorconfig
@@ -18,3 +17,14 @@ D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\refint\Dah
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI.pdb
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI.genruntimeconfig.cache
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\ref\DahuaUserManager.UI.dll
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI.sourcelink.json
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Api.dll
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Core.dll
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Models.dll
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Storage.dll
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Api.pdb
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Core.pdb
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Models.pdb
+D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserManager.Storage.pdb
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI.csproj.AssemblyReference.cache
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUse.03445172.Up2Date

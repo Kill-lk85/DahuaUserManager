@@ -7,14 +7,72 @@
   "targets": {
     ".NETCoreApp,Version=v10.0": {
       "DahuaUserManager.UI/1.0.0": {
+        "dependencies": {
+          "DahuaUserManager.Api": "1.0.0",
+          "DahuaUserManager.Core": "1.0.0",
+          "DahuaUserManager.Models": "1.0.0",
+          "DahuaUserManager.Storage": "1.0.0"
+        },
         "runtime": {
           "DahuaUserManager.UI.dll": {}
+        }
+      },
+      "DahuaUserManager.Api/1.0.0": {
+        "runtime": {
+          "DahuaUserManager.Api.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "DahuaUserManager.Core/1.0.0": {
+        "runtime": {
+          "DahuaUserManager.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "DahuaUserManager.Models/1.0.0": {
+        "runtime": {
+          "DahuaUserManager.Models.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "DahuaUserManager.Storage/1.0.0": {
+        "runtime": {
+          "DahuaUserManager.Storage.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }
   },
   "libraries": {
     "DahuaUserManager.UI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DahuaUserManager.Api/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DahuaUserManager.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DahuaUserManager.Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DahuaUserManager.Storage/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

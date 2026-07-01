@@ -1,11 +1,87 @@
 {
   "version": 4,
   "targets": {
-    "net10.0-windows": {}
+    "net10.0-windows": {
+      "DahuaUserManager.Api/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/DahuaUserManager.Api.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DahuaUserManager.Api.dll": {}
+        }
+      },
+      "DahuaUserManager.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/DahuaUserManager.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DahuaUserManager.Core.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WPF"
+        ]
+      },
+      "DahuaUserManager.Models/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/DahuaUserManager.Models.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DahuaUserManager.Models.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WPF"
+        ]
+      },
+      "DahuaUserManager.Storage/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/DahuaUserManager.Storage.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DahuaUserManager.Storage.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WPF"
+        ]
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "DahuaUserManager.Api/1.0.0": {
+      "type": "project",
+      "path": "../DahuaUserManager.Api/DahuaUserManager.Api.csproj",
+      "msbuildProject": "../DahuaUserManager.Api/DahuaUserManager.Api.csproj"
+    },
+    "DahuaUserManager.Core/1.0.0": {
+      "type": "project",
+      "path": "../DahuaUserManager.Core/DahuaUserManager.Core.csproj",
+      "msbuildProject": "../DahuaUserManager.Core/DahuaUserManager.Core.csproj"
+    },
+    "DahuaUserManager.Models/1.0.0": {
+      "type": "project",
+      "path": "../DahuaUserManager.Models/DahuaUserManager.Models.csproj",
+      "msbuildProject": "../DahuaUserManager.Models/DahuaUserManager.Models.csproj"
+    },
+    "DahuaUserManager.Storage/1.0.0": {
+      "type": "project",
+      "path": "../DahuaUserManager.Storage/DahuaUserManager.Storage.csproj",
+      "msbuildProject": "../DahuaUserManager.Storage/DahuaUserManager.Storage.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0-windows": []
+    "net10.0-windows": [
+      "DahuaUserManager.Api >= 1.0.0",
+      "DahuaUserManager.Core >= 1.0.0",
+      "DahuaUserManager.Models >= 1.0.0",
+      "DahuaUserManager.Storage >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\user\\.nuget\\packages\\": {}
@@ -34,7 +110,20 @@
         "net10.0-windows": {
           "framework": "net10.0-windows7.0",
           "targetAlias": "net10.0-windows",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj": {
+              "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj"
+            },
+            "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj": {
+              "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj"
+            },
+            "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj": {
+              "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj"
+            },
+            "D:\\DahuaUserManager\\src\\DahuaUserManager.Storage\\DahuaUserManager.Storage.csproj": {
+              "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Storage\\DahuaUserManager.Storage.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
