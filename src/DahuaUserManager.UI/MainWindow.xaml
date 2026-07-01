@@ -2,55 +2,113 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Dahua User Manager"
-        Height="650"
-        Width="1100"
+        Height="720"
+        Width="1200"
         WindowStartupLocation="CenterScreen">
 
-	<DockPanel>
+    <DockPanel Background="#F5F5F5">
 
-		<!-- Строка состояния -->
-		<StatusBar DockPanel.Dock="Bottom">
-			<StatusBarItem>
-				<TextBlock Text="Готов"/>
-			</StatusBarItem>
-		</StatusBar>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Готов"/>
+            </StatusBarItem>
+        </StatusBar>
 
-		<!-- Меню слева -->
-		<Border DockPanel.Dock="Left"
-                Width="220"
-                Background="#F2F2F2">
+        <Border DockPanel.Dock="Left"
+                Width="260"
+                Background="#ECECEC"
+                BorderBrush="#D0D0D0"
+                BorderThickness="0,0,1,0">
 
-			<StackPanel Margin="10">
+            <StackPanel Margin="12">
 
-				<TextBlock Text="Dahua User Manager"
-                           FontSize="18"
+                <TextBlock Text="Контроллеры"
+                           FontSize="20"
                            FontWeight="Bold"
-                           Margin="0,0,0,20"/>
+                           Margin="0,0,0,15"/>
 
-				<Button Content="Контроллеры" Height="40" Margin="0,5"/>
-				<Button Content="Пользователи" Height="40" Margin="0,5"/>
-				<Button Content="Лица" Height="40" Margin="0,5"/>
-				<Button Content="Карты" Height="40" Margin="0,5"/>
-				<Button Content="Журнал" Height="40" Margin="0,5"/>
-				<Button Content="Настройки" Height="40" Margin="0,5"/>
-				<Button Content="Проверить контроллер"
-        Height="40"
-        Margin="0,20,0,0"
-        Click="CheckController_Click"/>
-			</StackPanel>
+                <ListBox x:Name="ControllersList"
+                         Height="150"
+                         SelectionChanged="ControllersList_SelectionChanged">
+                    <ListBoxItem IsSelected="True" Tag="192.168.0.250">
+                        <TextBlock Text="192.168.0.250"/>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="192.168.0.251">
+                        <TextBlock Text="192.168.0.251"/>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="192.168.0.252">
+                        <TextBlock Text="192.168.0.252"/>
+                    </ListBoxItem>
+                </ListBox>
 
-		</Border>
+                <Separator Margin="0,15"/>
 
-		<!-- Рабочая область -->
-		<Grid Margin="10">
+                <Button Content="Обновить пользователей"
+                        Height="42"
+                        Margin="0,5"
+                        Click="RefreshUsers_Click"/>
 
-			<TextBlock Text="Добро пожаловать в Dahua User Manager"
+                <Button Content="Удалить выбранного"
+                        Height="42"
+                        Margin="0,5"
+                        Click="DeleteSelected_Click"/>
+
+            </StackPanel>
+        </Border>
+
+        <Grid Margin="14">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="HeaderText"
+                       Text="Пользователи контроллера 192.168.0.250"
                        FontSize="24"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+                       FontWeight="Bold"
+                       Margin="0,0,0,12"/>
 
-		</Grid>
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-	</DockPanel>
+                <TextBlock Text="Поиск:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
 
+                <TextBox x:Name="SearchBox"
+                         Grid.Column="1"
+                         Height="32"
+                         TextChanged="SearchBox_TextChanged"/>
+
+                <TextBlock x:Name="CountText"
+                           Grid.Column="2"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Text="Записей: 0"/>
+            </Grid>
+
+            <DataGrid x:Name="UsersGrid"
+                      Grid.Row="2"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="RecNo" Binding="{Binding RecNo}" Width="80"/>
+                    <DataGridTextColumn Header="UserID" Binding="{Binding UserId}" Width="100"/>
+                    <DataGridTextColumn Header="Имя" Binding="{Binding CardName}" Width="*"/>
+                    <DataGridTextColumn Header="Карта" Binding="{Binding CardNo}" Width="140"/>
+                    <DataGridTextColumn Header="Статус" Binding="{Binding CardStatus}" Width="100"/>
+                    <DataGridTextColumn Header="Действует" Binding="{Binding IsValid}" Width="100"/>
+                    <DataGridTextColumn Header="Начало" Binding="{Binding ValidDateStart}" Width="160"/>
+                    <DataGridTextColumn Header="Конец" Binding="{Binding ValidDateEnd}" Width="160"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+    </DockPanel>
 </Window>
