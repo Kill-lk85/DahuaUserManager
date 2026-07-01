@@ -59,7 +59,7 @@ public class RawHttpClient
             if (responseBytes.Length == 0)
                 return "EMPTY RESPONSE";
 
-            return Encoding.ASCII.GetString(responseBytes);
+            return Encoding.UTF8.GetString(responseBytes);
         }
         catch (Exception ex)
         {

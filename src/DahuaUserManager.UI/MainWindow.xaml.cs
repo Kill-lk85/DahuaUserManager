@@ -6,8 +6,8 @@ namespace DahuaUserManager.UI
 {
     public partial class MainWindow : Window
     {
-        private readonly RawHttpClient _rawClient = new();
-        private readonly DigestAuthenticator _digest = new();
+        private readonly RecordFinderClient _finder = new();
+        private readonly DahuaClient _client = new();
 
         public MainWindow()
         {
@@ -19,69 +19,83 @@ namespace DahuaUserManager.UI
             const string ip = "192.168.0.250";
             const string username = "admin";
             const string password = "Admin123!";
-            const string path = "/cgi-bin/magicBox.cgi?action=getSystemInfo";
+            const string userId = "1";
 
-            string firstResponse = await _rawClient.SendGetAsync(ip, path);
+            var log = new List<string>();
 
-            string authLine = firstResponse
-                .Replace("\r\n", "\n")
-                .Split('\n')
-                .FirstOrDefault(x => x.TrimStart().StartsWith("WWW-Authenticate:", StringComparison.OrdinalIgnoreCase))
-                ?? "";
-
-            if (string.IsNullOrWhiteSpace(authLine))
+            try
             {
-                string file = SaveResponse("response.txt", firstResponse);
-                MessageBox.Show($"WWW-Authenticate не найден.\nФайл:\n{file}");
-                return;
+                AccessControlCard? before = await _finder.FindCardByUserIdAsync(
+                    ip, username, password, userId);
+
+                if (before == null)
+                {
+                    MessageBox.Show($"UserID={userId} уже не найден.");
+                    return;
+                }
+
+                log.Add("===== BEFORE =====");
+                log.Add($"UserID={before.UserId}");
+                log.Add($"RecNo={before.RecNo}");
+                log.Add($"Name={before.CardName}");
+                log.Add("");
+
+                string deletePath =
+                    $"/cgi-bin/recordUpdater.cgi?action=remove&name=AccessControlCard&recno={before.RecNo}";
+
+                log.Add("===== DELETE REQUEST =====");
+                log.Add(deletePath);
+                log.Add("");
+
+                string deleteResult = await _client.ExecuteAuthenticatedGetAsync(
+                    ip, username, password, deletePath);
+
+                log.Add("===== DELETE RESPONSE BODY =====");
+                log.Add(deleteResult);
+                log.Add("");
+
+                AccessControlCard? after = await _finder.FindCardByUserIdAsync(
+                    ip, username, password, userId);
+
+                log.Add("===== AFTER =====");
+
+                if (after == null)
+                {
+                    log.Add("Пользователь больше не найден.");
+                }
+                else
+                {
+                    log.Add($"UserID={after.UserId}");
+                    log.Add($"RecNo={after.RecNo}");
+                    log.Add($"Name={after.CardName}");
+                }
+
+                string fileName = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "delete_test.txt");
+
+                File.WriteAllText(fileName, string.Join(Environment.NewLine, log));
+
+                MessageBox.Show(
+                    $"Тест удаления выполнен.\n\nФайл:\n{fileName}",
+                    "Delete test",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
-
-            string digestHeader = authLine
-                .Substring(authLine.IndexOf(':') + 1)
-                .Trim();
-
-            DigestInfo info = _digest.Parse(digestHeader);
-
-            string authorization = _digest.CreateAuthorizationHeader(
-                username,
-                password,
-                "GET",
-                path,
-                info);
-
-            var headers = new Dictionary<string, string>
+            catch (Exception ex)
             {
-                ["Authorization"] = authorization
-            };
+                string fileName = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "delete_test_error.txt");
 
-            string secondResponse = await _rawClient.SendGetAsync(ip, path, headers);
+                File.WriteAllText(fileName, ex.ToString());
 
-            string fullLog =
-                "===== FIRST RESPONSE =====\r\n" +
-                firstResponse +
-                "\r\n\r\n===== AUTHORIZATION =====\r\n" +
-                authorization +
-                "\r\n\r\n===== SECOND RESPONSE =====\r\n" +
-                secondResponse;
-
-            string fileName = SaveResponse("digest_test.txt", fullLog);
-
-            MessageBox.Show(
-                $"Готово. Лог сохранён:\n\n{fileName}",
-                "Digest test",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-
-        private static string SaveResponse(string fileName, string text)
-        {
-            string fullPath = Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                fileName);
-
-            File.WriteAllText(fullPath, text);
-
-            return fullPath;
+                MessageBox.Show(
+                    $"Ошибка. Лог:\n{fileName}",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
     }
 }

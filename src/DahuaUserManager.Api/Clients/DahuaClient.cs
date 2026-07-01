@@ -1,85 +1,121 @@
-using System.Net;
-using System.Text;
-
 namespace DahuaUserManager.Api.Clients;
 
 public class DahuaClient
 {
-    private readonly HttpClient _httpClient;
+    private readonly RawHttpClient _rawClient = new();
+    private readonly DigestAuthenticator _digest = new();
 
-    public DahuaClient()
+    public async Task<SystemInfo> GetSystemInfoAsync(
+        string ipAddress,
+        string username,
+        string password)
     {
-        var handler = new HttpClientHandler
-        {
-            UseCookies = true,
-            AllowAutoRedirect = true,
-            Credentials = new NetworkCredential("admin", "admin123!")
-        };
+        string body = await ExecuteAuthenticatedGetAsync(
+            ipAddress,
+            username,
+            password,
+            "/cgi-bin/magicBox.cgi?action=getSystemInfo");
 
-        _httpClient = new HttpClient(handler)
-        {
-            Timeout = TimeSpan.FromSeconds(5)
-        };
+        return ParseSystemInfo(body);
     }
 
-    public async Task<bool> IsOnlineAsync(string ipAddress)
+    public async Task<string> ExecuteAuthenticatedGetAsync(
+        string ipAddress,
+        string username,
+        string password,
+        string path)
     {
-        try
+        string firstResponse = await _rawClient.SendGetAsync(ipAddress, path);
+
+        string authLine = firstResponse
+            .Replace("\r\n", "\n")
+            .Split('\n')
+            .FirstOrDefault(x => x.TrimStart().StartsWith("WWW-Authenticate:", StringComparison.OrdinalIgnoreCase))
+            ?? "";
+
+        if (string.IsNullOrWhiteSpace(authLine))
+            throw new Exception("WWW-Authenticate не найден.\n\n" + firstResponse);
+
+        string digestHeader = authLine
+            .Substring(authLine.IndexOf(':') + 1)
+            .Trim();
+
+        DigestInfo digestInfo = _digest.Parse(digestHeader);
+
+        string authorization = _digest.CreateAuthorizationHeader(
+            username,
+            password,
+            "GET",
+            path,
+            digestInfo);
+
+        var headers = new Dictionary<string, string>
         {
-            using var response = await _httpClient.GetAsync($"http://{ipAddress}");
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+            ["Authorization"] = authorization
+        };
+
+        string secondResponse = await _rawClient.SendGetAsync(
+            ipAddress,
+            path,
+            headers);
+
+        if (!secondResponse.StartsWith("HTTP/1.1 200"))
+            throw new Exception("Ошибка авторизованного запроса:\n\n" + secondResponse);
+
+        return ExtractBody(secondResponse);
     }
 
-    public async Task<string> GetAuthInfoAsync(string ipAddress)
+    private static string ExtractBody(string response)
     {
-        try
+        int index = response.IndexOf("\r\n\r\n", StringComparison.Ordinal);
+
+        if (index < 0)
+            return "";
+
+        return response[(index + 4)..];
+    }
+
+    private static SystemInfo ParseSystemInfo(string body)
+    {
+        var info = new SystemInfo();
+
+        foreach (string line in body.Replace("\r\n", "\n").Split('\n'))
         {
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                $"http://{ipAddress}/cgi-bin/magicBox.cgi?action=getSystemInfo");
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
 
-            using var response = await _httpClient.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead);
+            string[] parts = line.Split('=', 2);
 
-            var sb = new StringBuilder();
+            if (parts.Length != 2)
+                continue;
 
-            sb.AppendLine($"HTTP {(int)response.StatusCode} {response.StatusCode}");
-            sb.AppendLine();
+            string key = parts[0].Trim();
+            string value = parts[1].Trim();
 
-            sb.AppendLine("=== Headers ===");
-
-            foreach (var header in response.Headers)
+            switch (key)
             {
-                sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                case "deviceType":
+                    info.DeviceType = value;
+                    break;
+
+                case "hardwareVersion":
+                    info.HardwareVersion = value;
+                    break;
+
+                case "processor":
+                    info.Processor = value;
+                    break;
+
+                case "serialNumber":
+                    info.SerialNumber = value;
+                    break;
+
+                case "updateSerial":
+                    info.UpdateSerial = value;
+                    break;
             }
-
-            sb.AppendLine();
-
-            sb.AppendLine("=== WWW-Authenticate ===");
-
-            if (response.Headers.WwwAuthenticate.Any())
-            {
-                foreach (var auth in response.Headers.WwwAuthenticate)
-                {
-                    sb.AppendLine(auth.ToString());
-                }
-            }
-            else
-            {
-                sb.AppendLine("Отсутствует");
-            }
-
-            return sb.ToString();
         }
-        catch (Exception ex)
-        {
-            return ex.ToString();
-        }
+
+        return info;
     }
 }
