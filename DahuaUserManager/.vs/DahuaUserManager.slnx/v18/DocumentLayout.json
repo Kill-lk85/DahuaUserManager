@@ -49,24 +49,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ControllerDetectionService.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAEoAAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T08:35:44.92Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -160,9 +147,22 @@
               "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\Windows\\ControllerManagerWindow.xaml.cs",
               "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\Windows\\ControllerManagerWindow.xaml.cs",
               "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\Windows\\ControllerManagerWindow.xaml.cs",
-              "ViewState": "AgIAAD4AAAAAAAAAAAAAAGQAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAFAAAAAAAAAAAAAAAHYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-02T08:20:35.409Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ControllerDetectionService.cs",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.Core\\Services\\ControllerDetectionService.cs",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAAAGsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T08:35:44.92Z",
               "EditorCaption": ""
             },
             {

@@ -62,6 +62,27 @@ public class ControllerDetectionService
         return info;
     }
 
+    /// <summary>
+    /// Проверяет список контроллеров.
+    /// </summary>
+    public async Task<List<ControllerInfo>> DetectAllAsync(
+        IEnumerable<ControllerInfo> controllers)
+    {
+        List<ControllerInfo> result = new();
+
+        foreach (ControllerInfo controller in controllers)
+        {
+            ControllerInfo detected = await DetectAsync(
+                controller.IpAddress,
+                controller.Username,
+                controller.Password);
+
+            result.Add(detected);
+        }
+
+        return result;
+    }
+
     private static string DetectApi(string response)
     {
         if (response.Contains("deviceType"))

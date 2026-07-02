@@ -61,24 +61,42 @@ namespace DahuaUserManager.UI.Windows
                 return;
             }
 
-            selected = await _detector.DetectAsync(
+            int index = ControllersGrid.SelectedIndex;
+
+            ControllerInfo detected = await _detector.DetectAsync(
                 selected.IpAddress,
                 selected.Username,
                 selected.Password);
 
-            int index = ControllersGrid.SelectedIndex;
-
             if (index >= 0)
             {
-                _controllers[index] = selected;
+                _controllers[index] = detected;
                 ControllersGrid.SelectedIndex = index;
             }
 
             MessageBox.Show(
-                selected.IsOnline
-                    ? $"Контроллер доступен.\n\nМодель: {selected.Model}\nAPI: {selected.ApiType}"
+                detected.IsOnline
+                    ? $"Контроллер доступен.\n\nМодель: {detected.Model}\nAPI: {detected.ApiType}"
                     : "Контроллер недоступен.",
                 "Проверка контроллера");
+        }
+
+        private async void CheckAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (_controllers.Count == 0)
+            {
+                MessageBox.Show("Список контроллеров пуст.");
+                return;
+            }
+
+            var detectedControllers = await _detector.DetectAllAsync(_controllers);
+
+            _controllers.Clear();
+
+            foreach (ControllerInfo controller in detectedControllers)
+                _controllers.Add(controller);
+
+            MessageBox.Show("Проверка всех контроллеров завершена.");
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)

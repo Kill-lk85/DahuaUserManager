@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Управление контроллерами"
         Height="540"
-        Width="920"
+        Width="1040"
         WindowStartupLocation="CenterOwner">
 
     <DockPanel Margin="12">
@@ -31,6 +31,12 @@
                     Margin="4"
                     Click="Check_Click"/>
 
+            <Button Content="Проверить все"
+                    Width="120"
+                    Height="34"
+                    Margin="4"
+                    Click="CheckAll_Click"/>
+
             <Button Content="Сохранить"
                     Width="110"
                     Height="34"
@@ -52,37 +58,14 @@
                   SelectionMode="Single">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Имя"
-                                    Binding="{Binding Name}"
-                                    Width="170"/>
-
-                <DataGridTextColumn Header="IP"
-                                    Binding="{Binding IpAddress}"
-                                    Width="140"/>
-
-                <DataGridTextColumn Header="Логин"
-                                    Binding="{Binding Username}"
-                                    Width="100"/>
-
-                <DataGridTextColumn Header="Пароль"
-                                    Binding="{Binding Password}"
-                                    Width="130"/>
-
-                <DataGridCheckBoxColumn Header="Онлайн"
-                                        Binding="{Binding IsOnline}"
-                                        Width="80"/>
-
-                <DataGridTextColumn Header="Модель"
-                                    Binding="{Binding Model}"
-                                    Width="170"/>
-
-                <DataGridTextColumn Header="API"
-                                    Binding="{Binding ApiType}"
-                                    Width="110"/>
-
-                <DataGridTextColumn Header="Прошивка"
-                                    Binding="{Binding Firmware}"
-                                    Width="*"/>
+                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="170"/>
+                <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="140"/>
+                <DataGridTextColumn Header="Логин" Binding="{Binding Username}" Width="100"/>
+                <DataGridTextColumn Header="Пароль" Binding="{Binding Password}" Width="130"/>
+                <DataGridCheckBoxColumn Header="Онлайн" Binding="{Binding IsOnline}" Width="80"/>
+                <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="170"/>
+                <DataGridTextColumn Header="API" Binding="{Binding ApiType}" Width="110"/>
+                <DataGridTextColumn Header="Прошивка" Binding="{Binding Firmware}" Width="*"/>
             </DataGrid.Columns>
 
         </DataGrid>
