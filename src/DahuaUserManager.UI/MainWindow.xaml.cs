@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using DahuaUserManager.Api.Clients;
 
@@ -8,54 +9,49 @@ namespace DahuaUserManager.UI
     {
         private readonly RecordFinderClient _finder = new();
 
-        private readonly List<ControllerInfo> _controllers =
-        [
-            new ControllerInfo { Name = "Контроллер 250", IpAddress = "192.168.0.250", Username = "admin", Password = "Admin123!" },
-            new ControllerInfo { Name = "Контроллер 251", IpAddress = "192.168.0.251", Username = "admin", Password = "Admin123!" },
-            new ControllerInfo { Name = "Контроллер 252", IpAddress = "192.168.0.252", Username = "admin", Password = "Admin123!" }
-        ];
+        private readonly ObservableCollection<AccessControlCard> _allUsers = new();
+        private readonly ObservableCollection<AccessControlCard> _visibleUsers = new();
 
-        private List<AccessControlCard> _allUsers = [];
-        private bool _isLoaded;
+        private const string Username = "admin";
+        private const string Password = "Admin123!";
 
         public MainWindow()
         {
             InitializeComponent();
-
-            _isLoaded = true;
-            ControllersList.SelectedIndex = 0;
-            UpdateSelectedControllerUi();
+            UsersGrid.ItemsSource = _visibleUsers;
         }
 
-        private ControllerInfo GetSelectedController()
+        private string GetSelectedIp()
         {
             if (ControllersList.SelectedItem is ListBoxItem item &&
                 item.Tag is string ip)
             {
-                return _controllers.First(c => c.IpAddress == ip);
+                return ip;
             }
 
-            return _controllers[0];
+            return "192.168.0.250";
         }
 
         private async void RefreshUsers_Click(object sender, RoutedEventArgs e)
         {
-            await RefreshUsersAsync();
-        }
-
-        private async Task RefreshUsersAsync()
-        {
             try
             {
-                ControllerInfo controller = GetSelectedController();
+                string ip = GetSelectedIp();
 
-                StatusText.Text = $"Загрузка {controller.IpAddress}...";
+                StatusText.Text = $"Загрузка пользователей с {ip}...";
+                HeaderText.Text = $"Пользователи контроллера {ip}";
 
-                _allUsers = await _finder.GetAccessControlCardsAsync(controller);
+                List<AccessControlCard> users =
+                    await _finder.GetAccessControlCardsAsync(ip, Username, Password);
+
+                _allUsers.Clear();
+
+                foreach (var user in users)
+                    _allUsers.Add(user);
 
                 ApplyFilter();
 
-                StatusText.Text = $"Загружено: {_allUsers.Count}";
+                StatusText.Text = $"Готово. Загружено: {_allUsers.Count}";
             }
             catch (Exception ex)
             {
@@ -66,80 +62,88 @@ namespace DahuaUserManager.UI
 
         private async void DeleteSelected_Click(object sender, RoutedEventArgs e)
         {
-            if (UsersGrid.SelectedItem is not AccessControlCard card)
+            if (UsersGrid.SelectedItem is not AccessControlCard selected)
             {
                 MessageBox.Show("Выберите пользователя.");
                 return;
             }
 
-            ControllerInfo controller = GetSelectedController();
-
-            if (MessageBox.Show(
-                $"Удалить пользователя с контроллера {controller.IpAddress}?\n\n" +
-                $"Имя: {card.CardName}\n" +
-                $"UserID: {card.UserId}\n" +
-                $"RecNo: {card.RecNo}",
-                "Подтверждение",
+            var confirm = MessageBox.Show(
+                $"Удалить пользователя?\n\nUserID: {selected.UserId}\nИмя: {selected.CardName}\nRecNo: {selected.RecNo}",
+                "Подтверждение удаления",
                 MessageBoxButton.YesNo,
-                MessageBoxImage.Warning) != MessageBoxResult.Yes)
-            {
+                MessageBoxImage.Warning);
+
+            if (confirm != MessageBoxResult.Yes)
                 return;
-            }
 
-            bool deleted = await _finder.DeleteCardByUserIdAsync(controller, card.UserId);
+            try
+            {
+                string ip = GetSelectedIp();
 
-            MessageBox.Show(deleted ? "Пользователь удалён." : "Удаление не удалось.");
+                bool deleted = await _finder.DeleteCardByUserIdAsync(
+                    ip,
+                    Username,
+                    Password,
+                    selected.UserId);
 
-            if (deleted)
+                MessageBox.Show(
+                    deleted ? "Пользователь удалён." : "Пользователь не найден или не удалён.");
+
                 await RefreshUsersAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Ошибка удаления");
+            }
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!_isLoaded)
-                return;
-
             ApplyFilter();
         }
 
         private void ControllersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!_isLoaded)
-                return;
-
-            UpdateSelectedControllerUi();
+            string ip = GetSelectedIp();
+            HeaderText.Text = $"Пользователи контроллера {ip}";
         }
 
-        private void UpdateSelectedControllerUi()
+        private async Task RefreshUsersAsync()
         {
-            ControllerInfo controller = GetSelectedController();
+            string ip = GetSelectedIp();
 
-            HeaderText.Text = $"Пользователи контроллера {controller.IpAddress}";
-            StatusText.Text = $"Выбран {controller.IpAddress}";
+            List<AccessControlCard> users =
+                await _finder.GetAccessControlCardsAsync(ip, Username, Password);
 
-            _allUsers = [];
-            UsersGrid.ItemsSource = _allUsers;
-            CountText.Text = "Записей: 0";
+            _allUsers.Clear();
+
+            foreach (var user in users)
+                _allUsers.Add(user);
+
+            ApplyFilter();
         }
 
         private void ApplyFilter()
         {
             string search = SearchBox.Text.Trim();
 
-            List<AccessControlCard> filtered = _allUsers;
+            _visibleUsers.Clear();
+
+            IEnumerable<AccessControlCard> filtered = _allUsers;
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                filtered = _allUsers
-                    .Where(u =>
-                        u.UserId.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                        u.CardName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                        u.CardNo.Contains(search, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                filtered = filtered.Where(x =>
+                    x.UserId.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    x.CardName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    x.CardNo.Contains(search, StringComparison.OrdinalIgnoreCase));
             }
 
-            UsersGrid.ItemsSource = filtered;
-            CountText.Text = $"Записей: {filtered.Count}";
+            foreach (var user in filtered)
+                _visibleUsers.Add(user);
+
+            CountText.Text = $"Записей: {_visibleUsers.Count}";
         }
     }
 }

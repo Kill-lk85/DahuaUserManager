@@ -1,4 +1,5 @@
-﻿namespace DahuaUserManager.Api.Clients;
+﻿using System.IO;
+namespace DahuaUserManager.Api.Clients;
 
 public class ControllerInfo
 {

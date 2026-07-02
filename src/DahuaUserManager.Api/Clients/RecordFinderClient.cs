@@ -6,34 +6,48 @@ public class RecordFinderClient
     private readonly RecordFinderParser _parser = new();
 
     public async Task<List<AccessControlCard>> GetAccessControlCardsAsync(
-        ControllerInfo controller)
+        string ipAddress,
+        string username,
+        string password)
     {
+        const string path =
+            "/cgi-bin/recordFinder.cgi?action=find&name=AccessControlCard";
+
         string response = await _client.ExecuteAuthenticatedGetAsync(
-            controller.IpAddress,
-            controller.Username,
-            controller.Password,
-            "/cgi-bin/recordFinder.cgi?action=find&name=AccessControlCard");
+            ipAddress,
+            username,
+            password,
+            path);
 
         return _parser.ParseCards(response);
     }
 
     public async Task<AccessControlCard?> FindCardByUserIdAsync(
-        ControllerInfo controller,
+        string ipAddress,
+        string username,
+        string password,
         string userId)
     {
-        List<AccessControlCard> cards =
-            await GetAccessControlCardsAsync(controller);
+        List<AccessControlCard> cards = await GetAccessControlCardsAsync(
+            ipAddress,
+            username,
+            password);
 
-        return cards.FirstOrDefault(c =>
-            c.UserId.Equals(userId, StringComparison.OrdinalIgnoreCase));
+        return cards.FirstOrDefault(x =>
+            x.UserId.Equals(userId, StringComparison.OrdinalIgnoreCase));
     }
 
     public async Task<bool> DeleteCardByUserIdAsync(
-        ControllerInfo controller,
+        string ipAddress,
+        string username,
+        string password,
         string userId)
     {
-        AccessControlCard? card =
-            await FindCardByUserIdAsync(controller, userId);
+        AccessControlCard? card = await FindCardByUserIdAsync(
+            ipAddress,
+            username,
+            password,
+            userId);
 
         if (card == null)
             return false;
@@ -42,11 +56,17 @@ public class RecordFinderClient
             $"/cgi-bin/recordUpdater.cgi?action=remove&name=AccessControlCard&recno={card.RecNo}";
 
         await _client.ExecuteAuthenticatedGetAsync(
-            controller.IpAddress,
-            controller.Username,
-            controller.Password,
+            ipAddress,
+            username,
+            password,
             path);
 
-        return await FindCardByUserIdAsync(controller, userId) == null;
+        AccessControlCard? check = await FindCardByUserIdAsync(
+            ipAddress,
+            username,
+            password,
+            userId);
+
+        return check == null;
     }
 }
