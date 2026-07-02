@@ -8,6 +8,20 @@
 
     <DockPanel Background="#F5F5F5">
 
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Выход" Click="Exit_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="Контроллеры">
+                <MenuItem Header="Управление..." Click="OpenControllerManager_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="Пользователи"/>
+            <MenuItem Header="Сервис"/>
+            <MenuItem Header="Справка"/>
+        </Menu>
+
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
                 <TextBlock x:Name="StatusText" Text="Готов"/>

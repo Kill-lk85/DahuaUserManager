@@ -5,6 +5,7 @@ using DahuaUserManager.Api.Clients;
 using DahuaUserManager.Core.Managers;
 using DahuaUserManager.Core.Services;
 using DahuaUserManager.Models.Entities;
+using DahuaUserManager.UI.Windows;
 
 namespace DahuaUserManager.UI
 {
@@ -28,6 +29,23 @@ namespace DahuaUserManager.UI
             UsersGrid.ItemsSource = _visibleUsers;
 
             LoadControllers();
+        }
+
+        private void OpenControllerManager_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new ControllerManagerWindow
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
+
+            LoadControllers();
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void LoadControllers()

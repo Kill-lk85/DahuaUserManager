@@ -31,3 +31,5 @@ D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUse.0
 D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\Config\appsettings.json
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Controls\ControllerCard.baml
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Controls\ControllerCard.g.cs
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Windows\ControllerManagerWindow.baml
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Windows\ControllerManagerWindow.g.cs
