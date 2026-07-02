@@ -33,3 +33,5 @@ D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Controls\C
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Controls\ControllerCard.g.cs
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Windows\ControllerManagerWindow.baml
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Windows\ControllerManagerWindow.g.cs
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Windows\UserEditorWindow.baml
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Windows\UserEditorWindow.g.cs
