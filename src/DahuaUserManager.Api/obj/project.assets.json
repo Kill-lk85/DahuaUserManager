@@ -1,11 +1,30 @@
 {
   "version": 4,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "DahuaUserManager.Models/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/DahuaUserManager.Models.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DahuaUserManager.Models.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "DahuaUserManager.Models/1.0.0": {
+      "type": "project",
+      "path": "../DahuaUserManager.Models/DahuaUserManager.Models.csproj",
+      "msbuildProject": "../DahuaUserManager.Models/DahuaUserManager.Models.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "DahuaUserManager.Models >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\user\\.nuget\\packages\\": {}
@@ -34,7 +53,11 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj": {
+              "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

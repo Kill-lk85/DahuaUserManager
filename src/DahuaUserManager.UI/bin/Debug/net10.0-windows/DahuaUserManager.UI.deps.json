@@ -18,6 +18,9 @@
         }
       },
       "DahuaUserManager.Api/1.0.0": {
+        "dependencies": {
+          "DahuaUserManager.Models": "1.0.0"
+        },
         "runtime": {
           "DahuaUserManager.Api.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -26,6 +29,11 @@
         }
       },
       "DahuaUserManager.Core/1.0.0": {
+        "dependencies": {
+          "DahuaUserManager.Api": "1.0.0",
+          "DahuaUserManager.Models": "1.0.0",
+          "DahuaUserManager.Storage": "1.0.0"
+        },
         "runtime": {
           "DahuaUserManager.Core.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -42,6 +50,9 @@
         }
       },
       "DahuaUserManager.Storage/1.0.0": {
+        "dependencies": {
+          "DahuaUserManager.Models": "1.0.0"
+        },
         "runtime": {
           "DahuaUserManager.Storage.dll": {
             "assemblyVersion": "1.0.0.0",

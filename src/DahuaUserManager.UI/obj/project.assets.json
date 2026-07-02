@@ -5,6 +5,9 @@
       "DahuaUserManager.Api/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "DahuaUserManager.Models": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/DahuaUserManager.Api.dll": {}
         },
@@ -15,6 +18,11 @@
       "DahuaUserManager.Core/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "DahuaUserManager.Api": "1.0.0",
+          "DahuaUserManager.Models": "1.0.0",
+          "DahuaUserManager.Storage": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/DahuaUserManager.Core.dll": {}
         },
@@ -33,14 +41,14 @@
         },
         "runtime": {
           "bin/placeholder/DahuaUserManager.Models.dll": {}
-        },
-        "frameworkReferences": [
-          "Microsoft.WindowsDesktop.App.WPF"
-        ]
+        }
       },
       "DahuaUserManager.Storage/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "DahuaUserManager.Models": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/DahuaUserManager.Storage.dll": {}
         },

@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="DahuaUserManager.UI.Controls.ControllerCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="95"
+             Width="260">
+
+    <Border Margin="4"
+            Padding="10"
+            CornerRadius="8"
+            BorderBrush="#CFCFCF"
+            BorderThickness="1"
+            Background="White">
+
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="StatusIcon"
+                       Text="🟢"
+                       FontSize="18"
+                       VerticalAlignment="Top"/>
+
+            <StackPanel Grid.Column="1">
+
+                <TextBlock x:Name="ControllerName"
+                           Text="Главный вход"
+                           FontWeight="Bold"
+                           FontSize="16"/>
+
+                <TextBlock x:Name="ControllerIp"
+                           Text="192.168.0.250"
+                           Margin="0,2,0,0"/>
+
+                <TextBlock x:Name="ControllerModel"
+                           Text="ASI6213S-PW"
+                           Foreground="Gray"
+                           Margin="0,2,0,0"/>
+
+            </StackPanel>
+
+        </Grid>
+
+    </Border>
+
+</UserControl>

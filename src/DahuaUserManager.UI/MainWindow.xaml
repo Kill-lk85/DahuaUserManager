@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Dahua User Manager"
-        Height="720"
-        Width="1200"
+        Height="760"
+        Width="1250"
         WindowStartupLocation="CenterScreen">
 
     <DockPanel Background="#F5F5F5">
@@ -15,7 +15,7 @@
         </StatusBar>
 
         <Border DockPanel.Dock="Left"
-                Width="260"
+                Width="300"
                 Background="#ECECEC"
                 BorderBrush="#D0D0D0"
                 BorderThickness="0,0,1,0">
@@ -25,21 +25,24 @@
                 <TextBlock Text="Контроллеры"
                            FontSize="20"
                            FontWeight="Bold"
-                           Margin="0,0,0,15"/>
+                           Margin="0,0,0,12"/>
 
                 <ListBox x:Name="ControllersList"
                          Height="150"
-                         SelectionChanged="ControllersList_SelectionChanged">
-                    <ListBoxItem IsSelected="True" Tag="192.168.0.250">
-                        <TextBlock Text="192.168.0.250"/>
-                    </ListBoxItem>
-                    <ListBoxItem Tag="192.168.0.251">
-                        <TextBlock Text="192.168.0.251"/>
-                    </ListBoxItem>
-                    <ListBoxItem Tag="192.168.0.252">
-                        <TextBlock Text="192.168.0.252"/>
-                    </ListBoxItem>
-                </ListBox>
+                         DisplayMemberPath="Name"
+                         SelectionChanged="ControllersList_SelectionChanged"/>
+
+                <TextBlock Text="IP нового контроллера"
+                           Margin="0,12,0,4"/>
+
+                <TextBox x:Name="NewControllerIpBox"
+                         Height="32"
+                         Text="192.168.0."/>
+
+                <Button Content="Добавить контроллер"
+                        Height="38"
+                        Margin="0,8,0,0"
+                        Click="AddController_Click"/>
 
                 <Separator Margin="0,15"/>
 
@@ -48,10 +51,15 @@
                         Margin="0,5"
                         Click="RefreshUsers_Click"/>
 
-                <Button Content="Удалить выбранного"
+                <Button Content="Удалить выбранного с текущего"
                         Height="42"
                         Margin="0,5"
                         Click="DeleteSelected_Click"/>
+
+                <Button Content="Удалить выбранного со всех"
+                        Height="42"
+                        Margin="0,5"
+                        Click="DeleteSelectedFromAll_Click"/>
 
             </StackPanel>
         </Border>
@@ -64,7 +72,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock x:Name="HeaderText"
-                       Text="Пользователи контроллера 192.168.0.250"
+                       Text="Пользователи"
                        FontSize="24"
                        FontWeight="Bold"
                        Margin="0,0,0,12"/>

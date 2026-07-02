@@ -29,3 +29,5 @@ D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\DahuaUserM
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUserManager.UI.csproj.AssemblyReference.cache
 D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\DahuaUse.03445172.Up2Date
 D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Debug\net10.0-windows\Config\appsettings.json
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Controls\ControllerCard.baml
+D:\DahuaUserManager\src\DahuaUserManager.UI\obj\Debug\net10.0-windows\Controls\ControllerCard.g.cs

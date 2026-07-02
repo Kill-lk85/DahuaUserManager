@@ -3,34 +3,34 @@
   "WorkspaceRootPath": "D:\\DahuaUserManager\\DahuaUserManager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4AB6A7A6-3155-4A32-B775-E48CAB42E6AB}|..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj|d:\\dahuausermanager\\src\\dahuausermanager.ui\\services\\configurationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{40736393-2D74-B3A5-34E1-0F8C69D402FD}|..\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj|d:\\dahuausermanager\\src\\dahuausermanager.api\\clients\\controllerinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4AB6A7A6-3155-4A32-B775-E48CAB42E6AB}|..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj|d:\\dahuausermanager\\src\\dahuausermanager.ui\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4AB6A7A6-3155-4A32-B775-E48CAB42E6AB}|..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj|d:\\dahuausermanager\\src\\dahuausermanager.ui\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{40736393-2D74-B3A5-34E1-0F8C69D402FD}|..\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj|d:\\dahuausermanager\\src\\dahuausermanager.api\\clients\\recordfinderclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4AB6A7A6-3155-4A32-B775-E48CAB42E6AB}|..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj|d:\\dahuausermanager\\src\\dahuausermanager.ui\\controls\\controllercard.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4AB6A7A6-3155-4A32-B775-E48CAB42E6AB}|..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj|d:\\dahuausermanager\\src\\dahuausermanager.ui\\dahuausermanager.ui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{4AB6A7A6-3155-4A32-B775-E48CAB42E6AB}|..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj|d:\\dahuausermanager\\src\\dahuausermanager.ui\\controls\\controllercard.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{40736393-2D74-B3A5-34E1-0F8C69D402FD}|..\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj|d:\\dahuausermanager\\src\\dahuausermanager.api\\clients\\rawhttpclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4AB6A7A6-3155-4A32-B775-E48CAB42E6AB}|..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj|d:\\dahuausermanager\\src\\dahuausermanager.ui\\dahuausermanager.ui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{40736393-2D74-B3A5-34E1-0F8C69D402FD}|..\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj|d:\\dahuausermanager\\src\\dahuausermanager.api\\clients\\recordfinderparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A8655CE1-2B3D-B293-749E-C321F816471B}|..\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj|d:\\dahuausermanager\\src\\dahuausermanager.core\\dahuausermanager.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{40736393-2D74-B3A5-34E1-0F8C69D402FD}|..\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj|d:\\dahuausermanager\\src\\dahuausermanager.api\\clients\\accesscontrolcard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A8655CE1-2B3D-B293-749E-C321F816471B}|..\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj|d:\\dahuausermanager\\src\\dahuausermanager.core\\managers\\controllermanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{40736393-2D74-B3A5-34E1-0F8C69D402FD}|..\\src\\DahuaUserManager.Api\\DahuaUserManager.Api.csproj|d:\\dahuausermanager\\src\\dahuausermanager.api\\clients\\digestauthenticator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0C9C7B1D-6A15-77FD-702E-92CD2D4A621B}|..\\src\\DahuaUserManager.Storage\\DahuaUserManager.Storage.csproj|d:\\dahuausermanager\\src\\dahuausermanager.storage\\configurationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4D4113C-6B37-C729-36EB-48785922E287}|..\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj|d:\\dahuausermanager\\src\\dahuausermanager.models\\entities\\appsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4D4113C-6B37-C729-36EB-48785922E287}|..\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj|d:\\dahuausermanager\\src\\dahuausermanager.models\\entities\\controllerinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,7 +40,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -48,128 +48,124 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ControllerCard.xaml.cs",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml.cs",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml.cs",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml.cs",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T07:38:12.879Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "ControllerCard.xaml",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\Controls\\ControllerCard.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-07-02T07:37:09.823Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DahuaUserManager.UI.csproj",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-07-02T07:34:51.361Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DahuaUserManager.Core.csproj",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-07-02T07:31:00.332Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ControllerManager.cs",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\Managers\\ControllerManager.cs",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Core\\Managers\\ControllerManager.cs",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\Managers\\ControllerManager.cs",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.Core\\Managers\\ControllerManager.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAQwDwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T07:30:43.51Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AppSettings.cs",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\Entities\\AppSettings.cs",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Models\\Entities\\AppSettings.cs",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\Entities\\AppSettings.cs",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.Models\\Entities\\AppSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T07:17:39.804Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\MainWindow.xaml",
               "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\MainWindow.xaml",
               "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\MainWindow.xaml",
               "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-07-02T03:29:47.993Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAG8AAAAAAAAAAAAiwIEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T03:27:43.33Z",
+              "WhenOpened": "2026-07-02T06:32:04.525Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ConfigurationService.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\Services\\ConfigurationService.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\Services\\ConfigurationService.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\Services\\ConfigurationService.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\Services\\ConfigurationService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAMsAAAAAAAAAAAAAAPEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-01T12:30:18.659Z",
+              "WhenOpened": "2026-07-02T05:55:26.726Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DahuaUserManager.UI.csproj",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-07-01T11:45:09.282Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "RecordFinderParser.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\RecordFinderParser.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Api\\Clients\\RecordFinderParser.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\RecordFinderParser.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.Api\\Clients\\RecordFinderParser.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAAAEsAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-01T10:10:42.668Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RecordFinderClient.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\RecordFinderClient.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Api\\Clients\\RecordFinderClient.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\RecordFinderClient.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.Api\\Clients\\RecordFinderClient.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAAEcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-01T10:08:36.385Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AccessControlCard.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\AccessControlCard.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Api\\Clients\\AccessControlCard.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\AccessControlCard.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.Api\\Clients\\AccessControlCard.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-01T10:06:56.221Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
-              "Title": "DigestAuthenticator.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\DigestAuthenticator.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Api\\Clients\\DigestAuthenticator.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\DigestAuthenticator.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.Api\\Clients\\DigestAuthenticator.cs",
-              "ViewState": "AgIAAEEAAAAAAAAAAAA9wFgAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-01T09:11:18.488Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "RawHttpClient.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\RawHttpClient.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Api\\Clients\\RawHttpClient.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\RawHttpClient.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.Api\\Clients\\RawHttpClient.cs",
-              "ViewState": "AgIAACgAAAAAAAAAAAAgwEQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-01T09:02:33.979Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "ControllerInfo.cs",
-              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\ControllerInfo.cs",
-              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Api\\Clients\\ControllerInfo.cs",
-              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Api\\Clients\\ControllerInfo.cs",
-              "RelativeToolTip": "..\\src\\DahuaUserManager.Api\\Clients\\ControllerInfo.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAmAAAAAAAAAA==",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\Entities\\ControllerInfo.cs",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Models\\Entities\\ControllerInfo.cs",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\Entities\\ControllerInfo.cs",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.Models\\Entities\\ControllerInfo.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAYwBkAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-01T10:58:54.382Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-02T05:50:20.506Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ConfigurationService.cs",
+              "DocumentMoniker": "D:\\DahuaUserManager\\src\\DahuaUserManager.Storage\\ConfigurationService.cs",
+              "RelativeDocumentMoniker": "..\\src\\DahuaUserManager.Storage\\ConfigurationService.cs",
+              "ToolTip": "D:\\DahuaUserManager\\src\\DahuaUserManager.Storage\\ConfigurationService.cs",
+              "RelativeToolTip": "..\\src\\DahuaUserManager.Storage\\ConfigurationService.cs",
+              "ViewState": "AgIAADoAAAAAAAAAAAAAAGAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T05:47:02.333Z"
             }
           ]
         }
