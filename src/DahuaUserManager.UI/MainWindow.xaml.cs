@@ -33,27 +33,18 @@ namespace DahuaUserManager.UI
 
         private void OpenControllerManager_Click(object sender, RoutedEventArgs e)
         {
-            var window = new ControllerManagerWindow
-            {
-                Owner = this
-            };
-
+            var window = new ControllerManagerWindow { Owner = this };
             window.ShowDialog();
-
             LoadControllers();
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void Exit_Click(object sender, RoutedEventArgs e) => Close();
 
         private void LoadControllers()
         {
             _isLoadingControllers = true;
 
             _controllerManager.Load();
-
             _controllers.Clear();
 
             foreach (var controller in _controllerManager.Controllers)
@@ -70,22 +61,105 @@ namespace DahuaUserManager.UI
             return ControllersList.SelectedItem as ControllerInfo;
         }
 
-        private void AddController_Click(object sender, RoutedEventArgs e)
+        private async void NewUser_Click(object sender, RoutedEventArgs e)
         {
-            string ip = NewControllerIpBox.Text.Trim();
+            ControllerInfo? controller = GetSelectedController();
 
-            bool added = _controllerManager.AddController(ip);
-
-            if (!added)
+            if (controller == null)
             {
-                MessageBox.Show("Контроллер не добавлен. Проверьте IP или дубликат.");
+                MessageBox.Show("Выберите контроллер.");
                 return;
             }
 
-            NewControllerIpBox.Text = "192.168.0.";
-            LoadControllers();
+            StatusText.Text = $"Получение актуального списка с {controller.IpAddress}...";
 
-            StatusText.Text = $"Контроллер {ip} добавлен и сохранён.";
+            List<AccessControlCard> users = await _finder.GetAccessControlCardsAsync(
+                controller.IpAddress,
+                controller.Username,
+                controller.Password);
+
+            _allUsers.Clear();
+
+            foreach (AccessControlCard userItem in users)
+                _allUsers.Add(userItem);
+
+            ApplyFilter();
+
+            int lastUserId = GetLastUserId();
+            string lastCardNumber = GetLastCardNumber();
+
+            var user = new AccessUser
+            {
+                IsValid = true,
+                ValidFrom = DateTime.Today,
+                ValidTo = DateTime.Today.AddYears(10)
+            };
+
+            var window = new UserEditorWindow(user, lastUserId, lastCardNumber)
+            {
+                Owner = this
+            };
+
+            if (window.ShowDialog() == true)
+            {
+                MessageBox.Show(
+                    $"Пользователь подготовлен.\n\nUserID: {window.User.UserId}\nИмя: {window.User.FullName}\nКарта: {window.User.CardNumber}\nФото: {window.PhotoPath}",
+                    "Новый пользователь");
+
+                StatusText.Text = $"Подготовлен пользователь UserID={window.User.UserId}";
+            }
+            else
+            {
+                StatusText.Text = "Создание пользователя отменено.";
+            }
+        }
+
+        private void EditUser_Click(object sender, RoutedEventArgs e)
+        {
+            if (UsersGrid.SelectedItem is not AccessControlCard selected)
+            {
+                MessageBox.Show("Выберите пользователя.");
+                return;
+            }
+
+            var user = new AccessUser
+            {
+                RecNo = selected.RecNo,
+                UserId = selected.UserId,
+                FullName = selected.CardName,
+                CardNumber = selected.CardNo,
+                CardStatus = selected.CardStatus.ToString(),
+                IsValid = selected.IsValid,
+                ValidFrom = ParseDate(selected.ValidDateStart),
+                ValidTo = ParseDate(selected.ValidDateEnd)
+            };
+
+            var window = new UserEditorWindow(user, GetLastUserId(), GetLastCardNumber())
+            {
+                Owner = this
+            };
+
+            if (window.ShowDialog() == true)
+            {
+                MessageBox.Show(
+                    $"Изменения подготовлены.\n\nUserID: {window.User.UserId}\nИмя: {window.User.FullName}",
+                    "Изменение пользователя");
+
+                StatusText.Text = $"Подготовлено изменение UserID={window.User.UserId}";
+            }
+        }
+
+        private void UserPhoto_Click(object sender, RoutedEventArgs e)
+        {
+            if (UsersGrid.SelectedItem is not AccessControlCard selected)
+            {
+                MessageBox.Show("Выберите пользователя.");
+                return;
+            }
+
+            MessageBox.Show(
+                $"Работа с фото будет подключена следующим Build.\n\nUserID: {selected.UserId}\nИмя: {selected.CardName}",
+                "Фото пользователя");
         }
 
         private async void RefreshUsers_Click(object sender, RoutedEventArgs e)
@@ -110,10 +184,7 @@ namespace DahuaUserManager.UI
             }
 
             var confirm = MessageBox.Show(
-                $"Удалить пользователя с текущего контроллера?\n\n" +
-                $"Контроллер: {controller.IpAddress}\n" +
-                $"UserID: {selected.UserId}\n" +
-                $"Имя: {selected.CardName}",
+                $"Удалить пользователя с текущего контроллера?\n\nКонтроллер: {controller.IpAddress}\nUserID: {selected.UserId}\nИмя: {selected.CardName}",
                 "Подтверждение",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -141,9 +212,7 @@ namespace DahuaUserManager.UI
             }
 
             var confirm = MessageBox.Show(
-                $"Удалить пользователя СО ВСЕХ контроллеров в списке?\n\n" +
-                $"UserID: {selected.UserId}\n" +
-                $"Имя: {selected.CardName}",
+                $"Удалить пользователя СО ВСЕХ контроллеров в списке?\n\nUserID: {selected.UserId}\nИмя: {selected.CardName}",
                 "Подтверждение удаления со всех",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -171,9 +240,7 @@ namespace DahuaUserManager.UI
                 }
             }
 
-            MessageBox.Show(
-                string.Join(Environment.NewLine, results),
-                "Результат удаления");
+            MessageBox.Show(string.Join(Environment.NewLine, results), "Результат удаления");
 
             await RefreshUsersAsync();
         }
@@ -213,11 +280,10 @@ namespace DahuaUserManager.UI
                 StatusText.Text = $"Загрузка пользователей с {controller.IpAddress}...";
                 HeaderText.Text = $"Пользователи контроллера {controller.IpAddress}";
 
-                List<AccessControlCard> users =
-                    await _finder.GetAccessControlCardsAsync(
-                        controller.IpAddress,
-                        controller.Username,
-                        controller.Password);
+                List<AccessControlCard> users = await _finder.GetAccessControlCardsAsync(
+                    controller.IpAddress,
+                    controller.Username,
+                    controller.Password);
 
                 _allUsers.Clear();
 
@@ -255,6 +321,39 @@ namespace DahuaUserManager.UI
                 _visibleUsers.Add(user);
 
             CountText.Text = $"Записей: {_visibleUsers.Count}";
+        }
+
+        private int GetLastUserId()
+        {
+            int max = 0;
+
+            foreach (AccessControlCard user in _allUsers)
+            {
+                if (int.TryParse(user.UserId, out int id) && id > max)
+                    max = id;
+            }
+
+            return max;
+        }
+
+        private string GetLastCardNumber()
+        {
+            long max = 0;
+
+            foreach (AccessControlCard user in _allUsers)
+            {
+                if (long.TryParse(user.CardNo, out long cardNo) && cardNo > max)
+                    max = cardNo;
+            }
+
+            return max > 0 ? max.ToString() : "";
+        }
+
+        private static DateTime? ParseDate(string value)
+        {
+            return DateTime.TryParse(value, out DateTime result)
+                ? result
+                : null;
         }
     }
 }

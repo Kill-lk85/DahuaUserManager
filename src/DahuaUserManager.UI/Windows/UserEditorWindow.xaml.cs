@@ -102,18 +102,18 @@ namespace DahuaUserManager.UI.Windows
 
             if (dialog.ShowDialog(this) == true)
             {
-                PhotoPath = dialog.FileName;
-                PhotoPathText.Text = PhotoPath;
-
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.UriSource = new Uri(PhotoPath);
-                image.EndInit();
-
-                PhotoPreview.Source = image;
-                NoPhotoText.Visibility = Visibility.Collapsed;
+                SetPhoto(dialog.FileName);
             }
+        }
+
+        private void CapturePhotoFromController_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Захват фото с контроллера подключим следующим шагом.\n\n" +
+                "Сначала нужно определить CGI/API для получения фото с вашей модели Dahua.",
+                "Захват с контроллера",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private void ClearPhoto_Click(object sender, RoutedEventArgs e)
@@ -153,6 +153,21 @@ namespace DahuaUserManager.UI.Windows
         {
             DialogResult = false;
             Close();
+        }
+
+        private void SetPhoto(string fileName)
+        {
+            PhotoPath = fileName;
+            PhotoPathText.Text = PhotoPath;
+
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = new Uri(PhotoPath);
+            image.EndInit();
+
+            PhotoPreview.Source = image;
+            NoPhotoText.Visibility = Visibility.Collapsed;
         }
     }
 }

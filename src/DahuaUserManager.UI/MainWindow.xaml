@@ -17,7 +17,14 @@
                 <MenuItem Header="Управление..." Click="OpenControllerManager_Click"/>
             </MenuItem>
 
-            <MenuItem Header="Пользователи"/>
+            <MenuItem Header="Пользователи">
+                <MenuItem Header="Новый пользователь..." Click="NewUser_Click"/>
+                <MenuItem Header="Изменить..." Click="EditUser_Click"/>
+                <Separator/>
+                <MenuItem Header="Удалить с текущего" Click="DeleteSelected_Click"/>
+                <MenuItem Header="Удалить со всех" Click="DeleteSelectedFromAll_Click"/>
+            </MenuItem>
+
             <MenuItem Header="Сервис"/>
             <MenuItem Header="Справка"/>
         </Menu>
@@ -42,44 +49,23 @@
                            Margin="0,0,0,12"/>
 
                 <ListBox x:Name="ControllersList"
-                         Height="150"
+                         Height="260"
                          DisplayMemberPath="Name"
                          SelectionChanged="ControllersList_SelectionChanged"/>
 
-                <TextBlock Text="IP нового контроллера"
-                           Margin="0,12,0,4"/>
-
-                <TextBox x:Name="NewControllerIpBox"
-                         Height="32"
-                         Text="192.168.0."/>
-
-                <Button Content="Добавить контроллер"
-                        Height="38"
-                        Margin="0,8,0,0"
-                        Click="AddController_Click"/>
-
                 <Separator Margin="0,15"/>
 
-                <Button Content="Обновить пользователей"
-                        Height="42"
+                <Button Content="Управление контроллерами..."
+                        Height="38"
                         Margin="0,5"
-                        Click="RefreshUsers_Click"/>
-
-                <Button Content="Удалить выбранного с текущего"
-                        Height="42"
-                        Margin="0,5"
-                        Click="DeleteSelected_Click"/>
-
-                <Button Content="Удалить выбранного со всех"
-                        Height="42"
-                        Margin="0,5"
-                        Click="DeleteSelectedFromAll_Click"/>
+                        Click="OpenControllerManager_Click"/>
 
             </StackPanel>
         </Border>
 
         <Grid Margin="14">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -91,7 +77,39 @@
                        FontWeight="Bold"
                        Margin="0,0,0,12"/>
 
-            <Grid Grid.Row="1" Margin="0,0,0,10">
+            <ToolBar Grid.Row="1" Margin="0,0,0,10">
+                <Button Content="➕ Новый"
+                        Padding="10,4"
+                        Click="NewUser_Click"/>
+
+                <Button Content="✏ Изменить"
+                        Padding="10,4"
+                        Click="EditUser_Click"/>
+
+                <Separator/>
+
+                <Button Content="📷 Фото"
+                        Padding="10,4"
+                        Click="UserPhoto_Click"/>
+
+                <Separator/>
+
+                <Button Content="🗑 Удалить"
+                        Padding="10,4"
+                        Click="DeleteSelected_Click"/>
+
+                <Button Content="🗑 Со всех"
+                        Padding="10,4"
+                        Click="DeleteSelectedFromAll_Click"/>
+
+                <Separator/>
+
+                <Button Content="🔄 Обновить"
+                        Padding="10,4"
+                        Click="RefreshUsers_Click"/>
+            </ToolBar>
+
+            <Grid Grid.Row="2" Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="300"/>
@@ -115,10 +133,22 @@
             </Grid>
 
             <DataGrid x:Name="UsersGrid"
-                      Grid.Row="2"
+                      Grid.Row="3"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       SelectionMode="Single">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Новый пользователь..." Click="NewUser_Click"/>
+                        <MenuItem Header="Изменить..." Click="EditUser_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Фото..." Click="UserPhoto_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Удалить с текущего" Click="DeleteSelected_Click"/>
+                        <MenuItem Header="Удалить со всех" Click="DeleteSelectedFromAll_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="RecNo" Binding="{Binding RecNo}" Width="80"/>
                     <DataGridTextColumn Header="UserID" Binding="{Binding UserId}" Width="100"/>
