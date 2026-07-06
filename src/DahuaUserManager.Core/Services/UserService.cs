@@ -1,5 +1,4 @@
 using DahuaUserManager.Api.Clients;
-using DahuaUserManager.Core.Mappers;
 using DahuaUserManager.Models.Entities;
 
 namespace DahuaUserManager.Core.Services;
@@ -8,6 +7,7 @@ public class UserService
 {
     private readonly RecordFinderClient _recordFinder = new();
     private readonly DahuaClient _client = new();
+    private readonly AccessUserRpcClient _rpcUser = new();
 
     public async Task<bool> CreateUserAsync(
         string ipAddress,
@@ -15,25 +15,14 @@ public class UserService
         string password,
         AccessUser user)
     {
-        AccessControlCard card = UserMapper.ToAccessControlCard(user);
-
-        string path =
-            "/cgi-bin/recordUpdater.cgi?action=insert&name=AccessControlCard" +
-            $"&CardName={Uri.EscapeDataString(card.CardName)}" +
-            $"&CardNo={Uri.EscapeDataString(card.CardNo)}" +
-            $"&CardStatus={card.CardStatus}" +
-            $"&IsValid={card.IsValid.ToString().ToLower()}" +
-            $"&UserID={Uri.EscapeDataString(card.UserId)}" +
-            $"&ValidDateStart={Uri.EscapeDataString(card.ValidDateStart)}" +
-            $"&ValidDateEnd={Uri.EscapeDataString(card.ValidDateEnd)}";
-
-        string response = await _client.ExecuteAuthenticatedGetAsync(
+        return await _rpcUser.CreateUserAsync(
             ipAddress,
             username,
             password,
-            path);
-
-        return response.Trim().Contains("OK", StringComparison.OrdinalIgnoreCase);
+            user.UserId,
+            user.FullName,
+            user.ValidFrom ?? DateTime.Today,
+            user.ValidTo ?? DateTime.Today.AddYears(10));
     }
 
     public async Task<bool> DeleteFaceByUserIdAsync(
@@ -48,7 +37,9 @@ public class UserService
             password,
             $"/cgi-bin/FaceInfoManager.cgi?action=remove&UserID={userId}");
 
-        return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
+        return response.Trim().Equals(
+            "OK",
+            StringComparison.OrdinalIgnoreCase);
     }
 
     public async Task<bool> DeleteUserCompletelyAsync(
@@ -57,7 +48,11 @@ public class UserService
         string password,
         string userId)
     {
-        await DeleteFaceByUserIdAsync(ipAddress, username, password, userId);
+        await DeleteFaceByUserIdAsync(
+            ipAddress,
+            username,
+            password,
+            userId);
 
         bool deleted = await _recordFinder.DeleteCardByUserIdAsync(
             ipAddress,
