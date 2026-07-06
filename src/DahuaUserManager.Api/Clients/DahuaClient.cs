@@ -25,6 +25,24 @@ public class DahuaClient
         string password,
         string path)
     {
+        string response = await ExecuteAuthenticatedGetRawAsync(
+            ipAddress,
+            username,
+            password,
+            path);
+
+        if (!response.StartsWith("HTTP/1.1 200"))
+            throw new Exception("Ошибка авторизованного запроса:\n\n" + response);
+
+        return ExtractBody(response);
+    }
+
+    public async Task<string> ExecuteAuthenticatedGetRawAsync(
+        string ipAddress,
+        string username,
+        string password,
+        string path)
+    {
         string firstResponse = await _rawClient.SendGetAsync(ipAddress, path);
 
         string authLine = firstResponse
@@ -54,15 +72,71 @@ public class DahuaClient
             ["Authorization"] = authorization
         };
 
+        return await _rawClient.SendGetAsync(ipAddress, path, headers);
+    }
+
+    public async Task<string> ExecuteAuthenticatedGetDiagnosticAsync(
+        string ipAddress,
+        string username,
+        string password,
+        string path)
+    {
+        string firstResponse = await _rawClient.SendGetAsync(ipAddress, path);
+
+        string authLine = firstResponse
+            .Replace("\r\n", "\n")
+            .Split('\n')
+            .FirstOrDefault(x => x.TrimStart().StartsWith("WWW-Authenticate:", StringComparison.OrdinalIgnoreCase))
+            ?? "";
+
+        var lines = new List<string>
+        {
+            "===== PATH =====",
+            path,
+            "",
+            "===== FIRST RESPONSE =====",
+            firstResponse,
+            ""
+        };
+
+        if (string.IsNullOrWhiteSpace(authLine))
+        {
+            lines.Add("===== ERROR =====");
+            lines.Add("WWW-Authenticate не найден.");
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        string digestHeader = authLine
+            .Substring(authLine.IndexOf(':') + 1)
+            .Trim();
+
+        DigestInfo digestInfo = _digest.Parse(digestHeader);
+
+        string authorization = _digest.CreateAuthorizationHeader(
+            username,
+            password,
+            "GET",
+            path,
+            digestInfo);
+
+        lines.Add("===== AUTHORIZATION =====");
+        lines.Add(authorization);
+        lines.Add("");
+
+        var headers = new Dictionary<string, string>
+        {
+            ["Authorization"] = authorization
+        };
+
         string secondResponse = await _rawClient.SendGetAsync(
             ipAddress,
             path,
             headers);
 
-        if (!secondResponse.StartsWith("HTTP/1.1 200"))
-            throw new Exception("Ошибка авторизованного запроса:\n\n" + secondResponse);
+        lines.Add("===== SECOND RESPONSE =====");
+        lines.Add(secondResponse);
 
-        return ExtractBody(secondResponse);
+        return string.Join(Environment.NewLine, lines);
     }
 
     private static string ExtractBody(string response)
