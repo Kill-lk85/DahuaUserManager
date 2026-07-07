@@ -43,7 +43,7 @@ public class AccessUserRpcClient
                 }
             },
             id = 100,
-            session
+            session = session
         };
 
         string json = JsonSerializer.Serialize(request);
@@ -51,13 +51,29 @@ public class AccessUserRpcClient
         string response = await _rpc.PostAsync(
             ipAddress,
             session,
-            json);
+            json,
+            "/RPC2");
 
         using JsonDocument document = JsonDocument.Parse(response);
 
-        if (document.RootElement.TryGetProperty("result", out JsonElement result))
-            return result.GetBoolean();
+        JsonElement root = document.RootElement;
 
-        return false;
+        if (root.TryGetProperty("error", out JsonElement error))
+        {
+            throw new Exception(
+                "AccessUser.insertMulti ошибка:\n\n" +
+                error +
+                "\n\nПолный ответ:\n" +
+                response);
+        }
+
+        if (root.TryGetProperty("result", out JsonElement result))
+        {
+            return result.GetBoolean();
+        }
+
+        throw new Exception(
+            "AccessUser.insertMulti: неожиданный ответ контроллера:\n\n" +
+            response);
     }
 }
