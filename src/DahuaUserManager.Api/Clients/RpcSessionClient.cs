@@ -13,44 +13,96 @@ public class RpcSessionClient
         string username,
         string password)
     {
-        string passwordHash = Md5Upper(password);
-
-        var request = new
+        var firstRequest = new
         {
             method = "global.login",
             @params = new
             {
                 userName = username,
-                password = passwordHash,
-                clientType = "Web3.0",
-                authorityType = "Default",
-                passwordType = "Default"
+                password = "",
+                clientType = "Web3.0"
             },
             id = 1,
-            session = ""
+            session = 0
         };
 
-        string json = JsonSerializer.Serialize(request);
-
-        string result = await _rpc.PostAsync(
+        string firstResponse = await _rpc.PostAsync(
             ipAddress,
             "",
-            json);
+            JsonSerializer.Serialize(firstRequest),
+            "/RPC2_Login");
 
-        using JsonDocument doc = JsonDocument.Parse(result);
+        using JsonDocument firstDoc = JsonDocument.Parse(firstResponse);
 
-        if (doc.RootElement.TryGetProperty("session", out JsonElement sessionElement))
-            return sessionElement.GetString() ?? "";
+        string session = firstDoc.RootElement
+            .GetProperty("session")
+            .GetRawText()
+            .Trim('"');
 
-        throw new Exception("RPC login не вернул session:\n" + result);
+        JsonElement p = firstDoc.RootElement.GetProperty("params");
+
+        string realm = p.GetProperty("realm").GetString() ?? "";
+        string random = p.GetProperty("random").GetString() ?? "";
+        string encryption = p.TryGetProperty("encryption", out var enc)
+            ? enc.GetString() ?? "Default"
+            : "Default";
+
+        string loginPassword = CreateDefaultPassword(
+            username,
+            password,
+            realm,
+            random);
+
+        var secondRequest = new
+        {
+            method = "global.login",
+            @params = new
+            {
+                userName = username,
+                password = loginPassword,
+                clientType = "Web3.0",
+                authorityType = "Default",
+                passwordType = encryption
+            },
+            id = 2,
+            session
+        };
+
+        string secondResponse = await _rpc.PostAsync(
+            ipAddress,
+            session,
+            JsonSerializer.Serialize(secondRequest),
+            "/RPC2_Login");
+
+        using JsonDocument secondDoc = JsonDocument.Parse(secondResponse);
+
+        if (secondDoc.RootElement.TryGetProperty("error", out JsonElement error))
+            throw new Exception("RPC login ошибка:\n" + error);
+
+        if (secondDoc.RootElement.TryGetProperty("session", out JsonElement finalSession))
+            return finalSession.GetString() ?? session;
+
+        return session;
+    }
+
+    private static string CreateDefaultPassword(
+        string username,
+        string password,
+        string realm,
+        string random)
+    {
+        string first = Md5Upper($"{username}:{realm}:{password}");
+        string second = Md5Upper($"{username}:{random}:{first}");
+
+        return second;
     }
 
     private static string Md5Upper(string value)
     {
-        byte[] input = Encoding.UTF8.GetBytes(value);
-        byte[] hash = MD5.HashData(input);
+        byte[] bytes = Encoding.UTF8.GetBytes(value);
+        byte[] hash = MD5.HashData(bytes);
 
-        StringBuilder sb = new();
+        var sb = new StringBuilder();
 
         foreach (byte b in hash)
             sb.Append(b.ToString("X2"));

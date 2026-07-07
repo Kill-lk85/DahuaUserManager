@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DahuaUserManager.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+04d0149952438488e25aad8b7228802022be2af9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2601faf39b08cd0eeb13a34ca8f6764d496ad271")]
 [assembly: System.Reflection.AssemblyProductAttribute("DahuaUserManager.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DahuaUserManager.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

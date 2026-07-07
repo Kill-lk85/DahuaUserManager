@@ -12,17 +12,28 @@ public class Rpc2Client
         string session,
         string json)
     {
+        return await PostAsync(
+            ipAddress,
+            session,
+            json,
+            "/RPC2");
+    }
+
+    public async Task<string> PostAsync(
+        string ipAddress,
+        string session,
+        string json,
+        string path)
+    {
         using var request = new HttpRequestMessage(
             HttpMethod.Post,
-            $"http://{ipAddress}/RPC2");
+            $"http://{ipAddress}{path}");
 
         request.Content = new StringContent(
             json,
             Encoding.UTF8,
             "application/json");
 
-        // При login Cookie ещё нет.
-        // После login используем полученную session.
         if (!string.IsNullOrWhiteSpace(session))
         {
             request.Headers.Add(

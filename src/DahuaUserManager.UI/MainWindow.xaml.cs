@@ -71,46 +71,79 @@ namespace DahuaUserManager.UI
                 return;
             }
 
-            StatusText.Text = $"Получение актуального списка с {controller.IpAddress}...";
-
-            List<AccessControlCard> users = await _finder.GetAccessControlCardsAsync(
-                controller.IpAddress,
-                controller.Username,
-                controller.Password);
-
-            _allUsers.Clear();
-
-            foreach (AccessControlCard userItem in users)
-                _allUsers.Add(userItem);
-
-            ApplyFilter();
-
-            int lastUserId = GetLastUserId();
-            string lastCardNumber = GetLastCardNumber();
-
-            var user = new AccessUser
+            try
             {
-                IsValid = true,
-                ValidFrom = DateTime.Today,
-                ValidTo = DateTime.Today.AddYears(10)
-            };
+                StatusText.Text = $"Получение актуального списка с {controller.IpAddress}...";
 
-            var window = new UserEditorWindow(user, lastUserId, lastCardNumber)
-            {
-                Owner = this
-            };
+                List<AccessControlCard> users = await _finder.GetAccessControlCardsAsync(
+                    controller.IpAddress,
+                    controller.Username,
+                    controller.Password);
 
-            if (window.ShowDialog() == true)
-            {
+                _allUsers.Clear();
+
+                foreach (AccessControlCard userItem in users)
+                    _allUsers.Add(userItem);
+
+                ApplyFilter();
+
+                int lastUserId = GetLastUserId();
+                string lastCardNumber = GetLastCardNumber();
+
+                var user = new AccessUser
+                {
+                    IsValid = true,
+                    ValidFrom = DateTime.Today,
+                    ValidTo = DateTime.Today.AddYears(10)
+                };
+
+                var window = new UserEditorWindow(user, lastUserId, lastCardNumber)
+                {
+                    Owner = this
+                };
+
+                if (window.ShowDialog() != true)
+                {
+                    StatusText.Text = "Создание пользователя отменено.";
+                    return;
+                }
+
+                StatusText.Text = $"Создание пользователя UserID={window.User.UserId}...";
+
+                bool created = await _userService.CreateUserAsync(
+                    controller.IpAddress,
+                    controller.Username,
+                    controller.Password,
+                    window.User);
+
+                if (!created)
+                {
+                    MessageBox.Show(
+                        "Контроллер не подтвердил создание пользователя.",
+                        "Создание пользователя",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    StatusText.Text = "Пользователь не создан.";
+                    return;
+                }
+
+                await RefreshUsersAsync();
+
+                SelectUserById(window.User.UserId);
+
                 MessageBox.Show(
-                    $"Пользователь подготовлен.\n\nUserID: {window.User.UserId}\nИмя: {window.User.FullName}\nКарта: {window.User.CardNumber}\nФото: {window.PhotoPath}",
-                    "Новый пользователь");
+                    $"Пользователь создан.\n\nUserID: {window.User.UserId}\nИмя: {window.User.FullName}",
+                    "Создание пользователя",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
 
-                StatusText.Text = $"Подготовлен пользователь UserID={window.User.UserId}";
+                StatusText.Text = $"Пользователь UserID={window.User.UserId} создан.";
             }
-            else
+            catch (Exception ex)
             {
-                StatusText.Text = "Создание пользователя отменено.";
+                StatusText.Text = "Ошибка создания пользователя.";
+                MessageBox.Show(ex.ToString(), "Ошибка создания пользователя");
             }
         }
 
@@ -347,6 +380,18 @@ namespace DahuaUserManager.UI
             }
 
             return max > 0 ? max.ToString() : "";
+        }
+
+        private void SelectUserById(string userId)
+        {
+            AccessControlCard? user = _visibleUsers.FirstOrDefault(x =>
+                x.UserId.Equals(userId, StringComparison.OrdinalIgnoreCase));
+
+            if (user == null)
+                return;
+
+            UsersGrid.SelectedItem = user;
+            UsersGrid.ScrollIntoView(user);
         }
 
         private static DateTime? ParseDate(string value)
