@@ -6,15 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Clients\RecordUpdaterClient.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Clients\RecordUpdaterClient.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ItemGroup>
     <ProjectReference Include="..\DahuaUserManager.Models\DahuaUserManager.Models.csproj" />
   </ItemGroup>
 

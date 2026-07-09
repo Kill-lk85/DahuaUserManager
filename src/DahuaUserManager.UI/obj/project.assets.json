@@ -20,8 +20,7 @@
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "DahuaUserManager.Api": "1.0.0",
-          "DahuaUserManager.Models": "1.0.0",
-          "DahuaUserManager.Storage": "1.0.0"
+          "DahuaUserManager.Models": "1.0.0"
         },
         "compile": {
           "bin/placeholder/DahuaUserManager.Core.dll": {}
@@ -42,22 +41,48 @@
         "runtime": {
           "bin/placeholder/DahuaUserManager.Models.dll": {}
         }
-      },
-      "DahuaUserManager.Storage/1.0.0": {
+      }
+    },
+    "net10.0-windows/win-x64": {
+      "DahuaUserManager.Api/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "DahuaUserManager.Models": "1.0.0"
         },
         "compile": {
-          "bin/placeholder/DahuaUserManager.Storage.dll": {}
+          "bin/placeholder/DahuaUserManager.Api.dll": {}
         },
         "runtime": {
-          "bin/placeholder/DahuaUserManager.Storage.dll": {}
+          "bin/placeholder/DahuaUserManager.Api.dll": {}
+        }
+      },
+      "DahuaUserManager.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "DahuaUserManager.Api": "1.0.0",
+          "DahuaUserManager.Models": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/DahuaUserManager.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DahuaUserManager.Core.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.WindowsDesktop.App.WPF"
         ]
+      },
+      "DahuaUserManager.Models/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/DahuaUserManager.Models.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DahuaUserManager.Models.dll": {}
+        }
       }
     }
   },
@@ -76,19 +101,13 @@
       "type": "project",
       "path": "../DahuaUserManager.Models/DahuaUserManager.Models.csproj",
       "msbuildProject": "../DahuaUserManager.Models/DahuaUserManager.Models.csproj"
-    },
-    "DahuaUserManager.Storage/1.0.0": {
-      "type": "project",
-      "path": "../DahuaUserManager.Storage/DahuaUserManager.Storage.csproj",
-      "msbuildProject": "../DahuaUserManager.Storage/DahuaUserManager.Storage.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0-windows": [
       "DahuaUserManager.Api >= 1.0.0",
       "DahuaUserManager.Core >= 1.0.0",
-      "DahuaUserManager.Models >= 1.0.0",
-      "DahuaUserManager.Storage >= 1.0.0"
+      "DahuaUserManager.Models >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -98,7 +117,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
-      "projectName": "DahuaUserManager.UI",
+      "projectName": "DahuaUserManager",
       "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\DahuaUserManager.UI.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
       "outputPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.UI\\obj\\",
@@ -127,9 +146,6 @@
             },
             "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj": {
               "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Models\\DahuaUserManager.Models.csproj"
-            },
-            "D:\\DahuaUserManager\\src\\DahuaUserManager.Storage\\DahuaUserManager.Storage.csproj": {
-              "projectPath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Storage\\DahuaUserManager.Storage.csproj"
             }
           }
         }
@@ -161,6 +177,20 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+            "version": "[10.0.9, 10.0.9]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Runtime.win-x64",
+            "version": "[10.0.9, 10.0.9]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+            "version": "[10.0.9, 10.0.9]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -460,6 +490,11 @@
           "System.Xml.XPath": "(,4.3.32767]",
           "System.Xml.XPath.XDocument": "(,5.0.32767]"
         }
+      }
+    },
+    "runtimes": {
+      "win-x64": {
+        "#import": []
       }
     }
   }

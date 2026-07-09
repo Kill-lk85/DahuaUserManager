@@ -62,6 +62,11 @@
                 <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="140"/>
                 <DataGridTextColumn Header="Логин" Binding="{Binding Username}" Width="100"/>
                 <DataGridTextColumn Header="Пароль" Binding="{Binding Password}" Width="130"/>
+                <DataGridCheckBoxColumn
+                Header="По умолчанию"
+                 Binding="{Binding UseByDefault}"
+                 Width="110"/>
+
                 <DataGridCheckBoxColumn Header="Онлайн" Binding="{Binding IsOnline}" Width="80"/>
                 <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="170"/>
                 <DataGridTextColumn Header="API" Binding="{Binding ApiType}" Width="110"/>

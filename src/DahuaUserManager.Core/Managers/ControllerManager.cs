@@ -1,5 +1,5 @@
 ﻿using DahuaUserManager.Models.Entities;
-using DahuaUserManager.Storage.Services;
+using DahuaUserManager.Core.Services;
 
 namespace DahuaUserManager.Core.Managers;
 

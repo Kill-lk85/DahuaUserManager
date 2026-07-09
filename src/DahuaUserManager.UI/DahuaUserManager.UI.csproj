@@ -6,23 +6,34 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
+
+		<ApplicationIcon>Resources\App.ico</ApplicationIcon>
+
+		<AssemblyName>DahuaUserManager</AssemblyName>
+		<RootNamespace>DahuaUserManager.UI</RootNamespace>
+
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+
+		<Product>Dahua User Manager</Product>
+		<Title>Dahua User Manager</Title>
+		<Description>Программа для управления пользователями, картами доступа и фотографиями на контроллерах Dahua.</Description>
+		<Company>Kill_l</Company>
+		<Authors>Kill_l</Authors>
+		<Copyright>© 2026 Kill_l</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\DahuaUserManager.Api\DahuaUserManager.Api.csproj" />
 		<ProjectReference Include="..\DahuaUserManager.Core\DahuaUserManager.Core.csproj" />
 		<ProjectReference Include="..\DahuaUserManager.Models\DahuaUserManager.Models.csproj" />
-		<ProjectReference Include="..\DahuaUserManager.Storage\DahuaUserManager.Storage.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="Config\appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>

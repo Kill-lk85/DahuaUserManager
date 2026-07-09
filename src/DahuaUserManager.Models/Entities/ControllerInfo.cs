@@ -38,6 +38,11 @@ public class ControllerInfo
     public string ApiType { get; set; } = string.Empty;
 
     /// <summary>
+    /// Использовать по умолчанию при создании пользователя.
+    /// </summary>
+    public bool UseByDefault { get; set; } = true;
+
+    /// <summary>
     /// Контроллер доступен.
     /// </summary>
     public bool IsOnline { get; set; }

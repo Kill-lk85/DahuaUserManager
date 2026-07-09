@@ -10,7 +10,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DahuaUserManager.Api\DahuaUserManager.Api.csproj" />
     <ProjectReference Include="..\DahuaUserManager.Models\DahuaUserManager.Models.csproj" />
-    <ProjectReference Include="..\DahuaUserManager.Storage\DahuaUserManager.Storage.csproj" />
   </ItemGroup>
 
 </Project>

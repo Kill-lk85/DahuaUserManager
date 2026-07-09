@@ -31,7 +31,7 @@ public class AccessUserRpcClient
                     new
                     {
                         UserID = userId,
-                        Name = fullName,
+                        UserName = fullName,
                         UserType = 0,
                         Authority = 2,
                         Password = "",

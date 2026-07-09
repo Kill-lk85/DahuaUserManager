@@ -6,7 +6,7 @@ using DahuaUserManager.Core.Managers;
 using DahuaUserManager.Core.Services;
 using DahuaUserManager.Models.Entities;
 using DahuaUserManager.UI.Windows;
-
+using DahuaUserManager.UI.Services;
 namespace DahuaUserManager.UI
 {
     public partial class MainWindow : Window
@@ -27,6 +27,9 @@ namespace DahuaUserManager.UI
 
             ControllersList.ItemsSource = _controllers;
             UsersGrid.ItemsSource = _visibleUsers;
+
+            Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
 
             LoadControllers();
         }
@@ -63,9 +66,9 @@ namespace DahuaUserManager.UI
 
         private async void NewUser_Click(object sender, RoutedEventArgs e)
         {
-            ControllerInfo? controller = GetSelectedController();
+            ControllerInfo? currentController = GetSelectedController();
 
-            if (controller == null)
+            if (currentController == null)
             {
                 MessageBox.Show("Выберите контроллер.");
                 return;
@@ -73,12 +76,12 @@ namespace DahuaUserManager.UI
 
             try
             {
-                StatusText.Text = $"Получение актуального списка с {controller.IpAddress}...";
+                StatusText.Text = $"Получение актуального списка с {currentController.IpAddress}...";
 
                 List<AccessControlCard> users = await _finder.GetAccessControlCardsAsync(
-                    controller.IpAddress,
-                    controller.Username,
-                    controller.Password);
+                    currentController.IpAddress,
+                    currentController.Username,
+                    currentController.Password);
 
                 _allUsers.Clear();
 
@@ -97,7 +100,12 @@ namespace DahuaUserManager.UI
                     ValidTo = DateTime.Today.AddYears(10)
                 };
 
-                var window = new UserEditorWindow(user, lastUserId, lastCardNumber)
+                var window = new UserEditorWindow(
+                    user,
+                    lastUserId,
+                    lastCardNumber,
+                    _controllers,
+                    currentController)
                 {
                     Owner = this
                 };
@@ -108,24 +116,66 @@ namespace DahuaUserManager.UI
                     return;
                 }
 
-                StatusText.Text = $"Создание пользователя UserID={window.User.UserId}...";
+                List<ControllerInfo> targetControllers =
+                    window.SelectedControllers.Count > 0
+                        ? window.SelectedControllers
+                        : new List<ControllerInfo> { currentController };
 
-                bool created = await _userService.CreateUserAsync(
-                    controller.IpAddress,
-                    controller.Username,
-                    controller.Password,
-                    window.User);
+                var resultLines = new List<string>();
 
-                if (!created)
+                foreach (ControllerInfo controller in targetControllers)
                 {
-                    MessageBox.Show(
-                        "Контроллер не подтвердил создание пользователя.",
-                        "Создание пользователя",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
+                    try
+                    {
+                        StatusText.Text =
+                            $"Создание UserID={window.User.UserId} на {controller.IpAddress}...";
 
-                    StatusText.Text = "Пользователь не создан.";
-                    return;
+                        bool created = await _userService.CreateUserAsync(
+                            controller.IpAddress,
+                            controller.Username,
+                            controller.Password,
+                            window.User);
+
+                        if (!created)
+                        {
+                            resultLines.Add($"✗ {controller.Name} ({controller.IpAddress}) — пользователь не создан");
+                            continue;
+                        }
+
+                        string photoText = "";
+
+                        if (!string.IsNullOrWhiteSpace(window.PhotoPath))
+                        {
+                            try
+                            {
+                                StatusText.Text =
+                                    $"Загрузка фото UserID={window.User.UserId} на {controller.IpAddress}...";
+
+                                bool photoUploaded = await _userService.UploadUserPhotoAsync(
+                                    controller.IpAddress,
+                                    controller.Username,
+                                    controller.Password,
+                                    window.User.UserId,
+                                    window.PhotoPath,
+                                    window.DepartId);
+
+                                photoText = photoUploaded
+                                    ? ", фото загружено"
+                                    : ", фото не загружено";
+                            }
+                            catch (Exception photoException)
+                            {
+                                photoText = ", фото ошибка: " + photoException.Message;
+                            }
+                        }
+
+                        resultLines.Add($"✓ {controller.Name} ({controller.IpAddress}) — создан{photoText}");
+                    }
+                    catch (Exception controllerException)
+                    {
+                        resultLines.Add(
+                            $"✗ {controller.Name} ({controller.IpAddress}) — ошибка: {controllerException.Message}");
+                    }
                 }
 
                 await RefreshUsersAsync();
@@ -133,12 +183,13 @@ namespace DahuaUserManager.UI
                 SelectUserById(window.User.UserId);
 
                 MessageBox.Show(
-                    $"Пользователь создан.\n\nUserID: {window.User.UserId}\nИмя: {window.User.FullName}",
+                    $"UserID: {window.User.UserId}\nИмя: {window.User.FullName}\n\n" +
+                    string.Join("\n", resultLines),
                     "Создание пользователя",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
-                StatusText.Text = $"Пользователь UserID={window.User.UserId} создан.";
+                StatusText.Text = $"Создание UserID={window.User.UserId} завершено.";
             }
             catch (Exception ex)
             {
@@ -149,6 +200,14 @@ namespace DahuaUserManager.UI
 
         private void EditUser_Click(object sender, RoutedEventArgs e)
         {
+            ControllerInfo? controller = GetSelectedController();
+
+            if (controller == null)
+            {
+                MessageBox.Show("Выберите контроллер.");
+                return;
+            }
+
             if (UsersGrid.SelectedItem is not AccessControlCard selected)
             {
                 MessageBox.Show("Выберите пользователя.");
@@ -167,7 +226,12 @@ namespace DahuaUserManager.UI
                 ValidTo = ParseDate(selected.ValidDateEnd)
             };
 
-            var window = new UserEditorWindow(user, GetLastUserId(), GetLastCardNumber())
+            var window = new UserEditorWindow(
+                user,
+                GetLastUserId(),
+                GetLastCardNumber(),
+                _controllers,
+                controller)
             {
                 Owner = this
             };
@@ -184,17 +248,62 @@ namespace DahuaUserManager.UI
 
         private void UserPhoto_Click(object sender, RoutedEventArgs e)
         {
+            ControllerInfo? controller = GetSelectedController();
+
+            if (controller == null)
+            {
+                MessageBox.Show("Выберите контроллер.");
+                return;
+            }
+
             if (UsersGrid.SelectedItem is not AccessControlCard selected)
             {
                 MessageBox.Show("Выберите пользователя.");
                 return;
             }
 
-            MessageBox.Show(
-                $"Работа с фото будет подключена следующим Build.\n\nUserID: {selected.UserId}\nИмя: {selected.CardName}",
-                "Фото пользователя");
+            var user = new AccessUser
+            {
+                RecNo = selected.RecNo,
+                UserId = selected.UserId,
+                FullName = selected.CardName,
+                CardNumber = selected.CardNo,
+                CardStatus = selected.CardStatus.ToString(),
+                IsValid = selected.IsValid,
+                ValidFrom = ParseDate(selected.ValidDateStart),
+                ValidTo = ParseDate(selected.ValidDateEnd)
+            };
+
+            var window = new UserEditorWindow(
+                user,
+                GetLastUserId(),
+                GetLastCardNumber(),
+                _controllers,
+                controller)
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
         }
 
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataGridLayoutService.Load(UsersGrid, "UsersGrid");
+        }
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new AboutWindow
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
+        }
+        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            DataGridLayoutService.Save(UsersGrid, "UsersGrid");
+        }
         private async void RefreshUsers_Click(object sender, RoutedEventArgs e)
         {
             await RefreshUsersAsync();
@@ -393,7 +502,7 @@ namespace DahuaUserManager.UI
             UsersGrid.SelectedItem = user;
             UsersGrid.ScrollIntoView(user);
         }
-
+       
         private static DateTime? ParseDate(string value)
         {
             return DateTime.TryParse(value, out DateTime result)
@@ -401,4 +510,5 @@ namespace DahuaUserManager.UI
                 : null;
         }
     }
+
 }

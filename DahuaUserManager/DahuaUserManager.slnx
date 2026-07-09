@@ -2,6 +2,5 @@
   <Project Path="../src/DahuaUserManager.Api/DahuaUserManager.Api.csproj" />
   <Project Path="../src/DahuaUserManager.Core/DahuaUserManager.Core.csproj" />
   <Project Path="../src/DahuaUserManager.Models/DahuaUserManager.Models.csproj" />
-  <Project Path="../src/DahuaUserManager.Storage/DahuaUserManager.Storage.csproj" />
   <Project Path="../src/DahuaUserManager.UI/DahuaUserManager.UI.csproj" />
 </Solution>

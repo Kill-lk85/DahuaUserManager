@@ -3,6 +3,7 @@ using System.Windows;
 using DahuaUserManager.Core.Managers;
 using DahuaUserManager.Core.Services;
 using DahuaUserManager.Models.Entities;
+using DahuaUserManager.UI.Services;
 
 namespace DahuaUserManager.UI.Windows
 {
@@ -18,7 +19,20 @@ namespace DahuaUserManager.UI.Windows
 
             ControllersGrid.ItemsSource = _controllers;
 
+            Loaded += ControllerManagerWindow_Loaded;
+            Closing += ControllerManagerWindow_Closing;
+
             LoadControllers();
+        }
+
+        private void ControllerManagerWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataGridLayoutService.Load(ControllersGrid, "ControllersGrid");
+        }
+
+        private void ControllerManagerWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            DataGridLayoutService.Save(ControllersGrid, "ControllersGrid");
         }
 
         private void LoadControllers()
@@ -38,7 +52,8 @@ namespace DahuaUserManager.UI.Windows
                 Name = "Новый контроллер",
                 IpAddress = "192.168.0.",
                 Username = "admin",
-                Password = "Admin123!"
+                Password = "Admin123!",
+                UseByDefault = true
             });
         }
 
@@ -68,6 +83,8 @@ namespace DahuaUserManager.UI.Windows
                 selected.Username,
                 selected.Password);
 
+            detected.UseByDefault = selected.UseByDefault;
+
             if (index >= 0)
             {
                 _controllers[index] = detected;
@@ -89,12 +106,21 @@ namespace DahuaUserManager.UI.Windows
                 return;
             }
 
+            Dictionary<string, bool> defaultFlags = _controllers
+                .Where(x => !string.IsNullOrWhiteSpace(x.IpAddress))
+                .ToDictionary(x => x.IpAddress, x => x.UseByDefault);
+
             var detectedControllers = await _detector.DetectAllAsync(_controllers);
 
             _controllers.Clear();
 
             foreach (ControllerInfo controller in detectedControllers)
+            {
+                if (defaultFlags.TryGetValue(controller.IpAddress, out bool useByDefault))
+                    controller.UseByDefault = useByDefault;
+
                 _controllers.Add(controller);
+            }
 
             MessageBox.Show("Проверка всех контроллеров завершена.");
         }
