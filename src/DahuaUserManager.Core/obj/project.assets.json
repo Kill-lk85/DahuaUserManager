@@ -25,31 +25,6 @@
           "bin/placeholder/DahuaUserManager.Models.dll": {}
         }
       }
-    },
-    "net10.0-windows/win-x64": {
-      "DahuaUserManager.Api/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
-        "dependencies": {
-          "DahuaUserManager.Models": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/DahuaUserManager.Api.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/DahuaUserManager.Api.dll": {}
-        }
-      },
-      "DahuaUserManager.Models/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
-        "compile": {
-          "bin/placeholder/DahuaUserManager.Models.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/DahuaUserManager.Models.dll": {}
-        }
-      }
     }
   },
   "libraries": {
@@ -134,20 +109,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-            "version": "[10.0.9, 10.0.9]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.win-x64",
-            "version": "[10.0.9, 10.0.9]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
-            "version": "[10.0.9, 10.0.9]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -447,11 +408,6 @@
           "System.Xml.XPath": "(,4.3.32767]",
           "System.Xml.XPath.XDocument": "(,5.0.32767]"
         }
-      }
-    },
-    "runtimes": {
-      "win-x64": {
-        "#import": []
       }
     }
   }

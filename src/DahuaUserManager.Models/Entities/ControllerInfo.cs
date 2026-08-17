@@ -46,4 +46,17 @@ public class ControllerInfo
     /// Контроллер доступен.
     /// </summary>
     public bool IsOnline { get; set; }
+
+    /// <summary>
+    /// Назначение контроллера в системе посещаемости.
+    /// </summary>
+    public AttendanceRole AttendanceRole { get; set; } = AttendanceRole.None;
+}
+
+public enum AttendanceRole
+{
+    None,
+    Entry,
+    Exit,
+    Both
 }

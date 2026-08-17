@@ -32,8 +32,35 @@ namespace DahuaUserManager.UI
             Closing += MainWindow_Closing;
 
             LoadControllers();
-        }
 
+        }
+        private void AttendanceReport_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new AttendanceReportWindow(_controllers)
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
+        }
+        private void WorkSchedules_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new WorkScheduleWindow
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
+        }
+        private void EmployeeSchedules_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new EmployeeScheduleWindow
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
+        }
         private void OpenControllerManager_Click(object sender, RoutedEventArgs e)
         {
             var window = new ControllerManagerWindow { Owner = this };
@@ -502,7 +529,7 @@ namespace DahuaUserManager.UI
             UsersGrid.SelectedItem = user;
             UsersGrid.ScrollIntoView(user);
         }
-       
+
         private static DateTime? ParseDate(string value)
         {
             return DateTime.TryParse(value, out DateTime result)
@@ -510,5 +537,6 @@ namespace DahuaUserManager.UI
                 : null;
         }
     }
+
 
 }

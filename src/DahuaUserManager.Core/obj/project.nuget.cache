@@ -1,12 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "a5Hr1XUEqz8=",
+  "dgSpecHash": "2KM2obn6G0w=",
   "success": true,
   "projectFilePath": "D:\\DahuaUserManager\\src\\DahuaUserManager.Core\\DahuaUserManager.Core.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\10.0.9\\microsoft.netcore.app.runtime.win-x64.10.0.9.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\10.0.9\\microsoft.windowsdesktop.app.runtime.win-x64.10.0.9.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\10.0.9\\microsoft.aspnetcore.app.runtime.win-x64.10.0.9.nupkg.sha512"
-  ],
+  "expectedPackageFiles": [],
   "logs": []
 }
