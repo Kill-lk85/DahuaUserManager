@@ -1,28 +1,25 @@
 # Visual Studio
 .vs/
-.vscode/
-
-# Build
+**/.vs/
 bin/
+**/bin/
 obj/
+**/obj/
 
-# User-specific files
+# Publish
+Publish/
+publish/
+**/Publish/
+**/publish/
+
+# Installer output
+InstallerOutput/
+**/InstallerOutput/
+
+# User files
 *.user
-*.rsuser
 *.suo
-*.userosscache
-*.sln.docstates
 
-# NuGet
-packages/
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.cache
-
-# ReSharper
-_ReSharper*/
-*.DotSettings.user
+# Visual Studio temporary files
+*.dtbcache.v2
+DocumentLayout*.json

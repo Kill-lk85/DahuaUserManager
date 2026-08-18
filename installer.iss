@@ -1,8 +1,8 @@
 #define MyAppName "Dahua User Manager"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.2.0"
 #define MyAppPublisher "Kill_l"
 #define MyAppExeName "DahuaUserManager.exe"
-#define PublishDir "D:\DahuaUserManager\src\DahuaUserManager.UI\bin\Release\net10.0-windows\win-x64\publish"
+#define PublishDir "D:\DahuaUserManager\Publish"
 #define IconFile "D:\DahuaUserManager\src\DahuaUserManager.UI\Resources\App.ico"
 
 [Setup]
@@ -14,7 +14,7 @@ DefaultDirName={autopf}\Dahua User Manager
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=D:\DahuaUserManager\InstallerOutput
-OutputBaseFilename=DahuaUserManagerSetup_1.0.0
+OutputBaseFilename=DahuaUserManagerSetup_1.2.0
 SetupIconFile={#IconFile}
 Compression=lzma2
 SolidCompression=yes
