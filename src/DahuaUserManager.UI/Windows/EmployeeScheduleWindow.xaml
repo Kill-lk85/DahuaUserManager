@@ -2,10 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Назначение графиков сотрудникам"
-        Height="650"
-        Width="1000"
-        MinHeight="500"
-        MinWidth="850"
+        Height="720"
+        Width="1050"
+        MinHeight="600"
+        MinWidth="900"
         WindowStartupLocation="CenterOwner">
 
     <DockPanel Margin="12">
@@ -21,11 +21,17 @@
                     HorizontalAlignment="Right"
                     Margin="0,12,0,0">
 
-            <Button Content="Назначить"
-                    Width="120"
+            <Button Content="Назначить отмеченным"
+                    Width="170"
                     Height="34"
                     Margin="4"
                     Click="Assign_Click"/>
+
+            <Button Content="Удалить назначение"
+                    Width="160"
+                    Height="34"
+                    Margin="4"
+                    Click="DeleteAssignment_Click"/>
 
             <Button Content="Обновить"
                     Width="120"
@@ -41,9 +47,8 @@
         </StackPanel>
 
         <Grid>
-
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="210"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -54,49 +59,113 @@
                     Margin="0,0,0,10">
 
                 <Grid>
-
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="280"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="220"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="360"/>
+                        <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Сотрудник:"
-                               VerticalAlignment="Center"
-                               Margin="0,0,8,0"/>
+                    <!-- Сотрудники -->
+                    <GroupBox Grid.Column="0"
+                              Header="Сотрудники">
 
-                    <ComboBox x:Name="EmployeeComboBox"
-                              Grid.Column="1"
-                              Height="30"
-                              DisplayMemberPath="DisplayName"/>
+                        <DockPanel Margin="6">
 
-                    <TextBlock Grid.Column="2"
-                               Text="График:"
-                               VerticalAlignment="Center"
-                               Margin="18,0,8,0"/>
+                            <StackPanel DockPanel.Dock="Bottom"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,6,0,0">
 
-                    <ComboBox x:Name="ScheduleComboBox"
-                              Grid.Column="3"
-                              Height="30"
-                              DisplayMemberPath="DisplayName"/>
+                                <TextBlock x:Name="SelectedEmployeesText"
+                                           Text="Отмечено: 0"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,12,0"/>
 
-                    <TextBlock Grid.Column="4"
-                               Text="Действует с:"
-                               VerticalAlignment="Center"
-                               Margin="18,0,8,0"/>
+                                <Button Content="Все"
+                                        Width="70"
+                                        Height="28"
+                                        Margin="3"
+                                        Click="SelectAllEmployees_Click"/>
 
-                    <DatePicker x:Name="DateFromPicker"
-                                Grid.Column="5"
-                                Height="30"/>
+                                <Button Content="Очистить"
+                                        Width="80"
+                                        Height="28"
+                                        Margin="3"
+                                        Click="ClearEmployees_Click"/>
+                            </StackPanel>
+
+                            <ListBox x:Name="EmployeesListBox"
+                                     BorderThickness="0"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding DisplayName}"
+                                                  IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  Margin="2"
+                                                  Checked="EmployeeCheckBox_Changed"
+                                                  Unchecked="EmployeeCheckBox_Changed"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+
+                            </ListBox>
+
+                        </DockPanel>
+
+                    </GroupBox>
+
+                    <!-- Параметры назначения -->
+                    <GroupBox Grid.Column="2"
+                              Header="Назначение">
+
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="График:"
+                                       VerticalAlignment="Center"/>
+
+                            <ComboBox x:Name="ScheduleComboBox"
+                                      Grid.Column="1"
+                                      Height="30"
+                                      DisplayMemberPath="DisplayName"
+                                      VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="1"
+                                       Text="Действует с:"
+                                       VerticalAlignment="Center"/>
+
+                            <DatePicker x:Name="DateFromPicker"
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Height="30"
+                                        VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="2"
+                                       Grid.ColumnSpan="2"
+                                       Text="Выбранный график и дата будут назначены всем сотрудникам, отмеченным галочками слева."
+                                       TextWrapping="Wrap"
+                                       Foreground="Gray"
+                                       VerticalAlignment="Top"
+                                       Margin="0,10,0,0"/>
+
+                        </Grid>
+
+                    </GroupBox>
 
                 </Grid>
 
             </Border>
 
+            <!-- Текущие назначения -->
             <DataGrid x:Name="AssignmentsGrid"
                       Grid.Row="1"
                       AutoGenerateColumns="False"

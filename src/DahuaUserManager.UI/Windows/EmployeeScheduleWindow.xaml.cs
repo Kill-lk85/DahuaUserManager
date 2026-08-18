@@ -1,8 +1,10 @@
-﻿using DahuaUserManager.Api.Clients;
-using DahuaUserManager.Models.Schedules;
+﻿using DahuaUserManager.Models.Schedules;
 using DahuaUserManager.UI.Database;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace DahuaUserManager.UI.Windows;
 
@@ -17,6 +19,9 @@ public partial class EmployeeScheduleWindow : Window
     private readonly ObservableCollection<EmployeeScheduleRow>
         _assignmentRows = new();
 
+    private readonly ObservableCollection<EmployeeScheduleEmployeeItem>
+        _employees = new();
+
     public EmployeeScheduleWindow()
     {
         InitializeComponent();
@@ -29,6 +34,9 @@ public partial class EmployeeScheduleWindow : Window
 
         AssignmentsGrid.ItemsSource =
             _assignmentRows;
+
+        EmployeesListBox.ItemsSource =
+            _employees;
 
         DateFromPicker.SelectedDate =
             DateTime.Today;
@@ -53,6 +61,8 @@ public partial class EmployeeScheduleWindow : Window
             await LoadEmployeesAsync();
             await LoadSchedulesAsync();
             await LoadAssignmentsAsync();
+
+            UpdateSelectedEmployeesText();
         }
         catch (Exception ex)
         {
@@ -66,6 +76,14 @@ public partial class EmployeeScheduleWindow : Window
 
     private async Task LoadEmployeesAsync()
     {
+        // Сохраняем текущие галочки при обновлении окна.
+        HashSet<string> selectedUserIds =
+            _employees
+                .Where(x => x.IsSelected)
+                .Select(x => x.UserId)
+                .ToHashSet(
+                    StringComparer.OrdinalIgnoreCase);
+
         DateTime from =
             DateTime.Today.AddYears(-10);
 
@@ -90,17 +108,22 @@ public partial class EmployeeScheduleWindow : Window
                     .Select(x => x.UserName)
                     .FirstOrDefault(x =>
                         !string.IsNullOrWhiteSpace(x))
-                    ?? g.Key
+                    ?? g.Key,
+
+                IsSelected =
+                    selectedUserIds.Contains(g.Key)
             })
             .OrderBy(x => x.UserName)
             .ThenBy(x => x.UserId)
             .ToList();
 
-        EmployeeComboBox.ItemsSource =
-            employees;
+        _employees.Clear();
 
-        if (employees.Count > 0)
-            EmployeeComboBox.SelectedIndex = 0;
+        foreach (EmployeeScheduleEmployeeItem employee
+                 in employees)
+        {
+            _employees.Add(employee);
+        }
     }
 
     private async Task LoadSchedulesAsync()
@@ -123,8 +146,11 @@ public partial class EmployeeScheduleWindow : Window
         ScheduleComboBox.ItemsSource =
             items;
 
-        if (items.Count > 0)
+        if (items.Count > 0 &&
+            ScheduleComboBox.SelectedIndex < 0)
+        {
             ScheduleComboBox.SelectedIndex = 0;
+        }
     }
 
     private async Task LoadAssignmentsAsync()
@@ -176,6 +202,9 @@ public partial class EmployeeScheduleWindow : Window
             _assignmentRows.Add(
                 new EmployeeScheduleRow
                 {
+                    AssignmentId =
+                        assignment.Id,
+
                     UserId =
                         assignment.UserId,
 
@@ -216,11 +245,15 @@ public partial class EmployeeScheduleWindow : Window
         object sender,
         RoutedEventArgs e)
     {
-        if (EmployeeComboBox.SelectedItem
-            is not EmployeeScheduleEmployeeItem employee)
+        List<EmployeeScheduleEmployeeItem> selectedEmployees =
+            _employees
+                .Where(x => x.IsSelected)
+                .ToList();
+
+        if (selectedEmployees.Count == 0)
         {
             MessageBox.Show(
-                "Выберите сотрудника.",
+                "Отметьте хотя бы одного сотрудника.",
                 "Назначение графика",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
@@ -251,20 +284,122 @@ public partial class EmployeeScheduleWindow : Window
             return;
         }
 
+        DateTime dateFrom =
+            DateFromPicker.SelectedDate.Value.Date;
+
+        MessageBoxResult confirm =
+            MessageBox.Show(
+                $"Назначить график «{scheduleItem.Schedule.Name}»\n" +
+                $"с {dateFrom:dd.MM.yyyy}\n\n" +
+                $"отмеченным сотрудникам: {selectedEmployees.Count}?",
+                "Назначение графика",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+        if (confirm != MessageBoxResult.Yes)
+            return;
+
+        var resultLines =
+            new List<string>();
+
+        int successCount = 0;
+
+        foreach (EmployeeScheduleEmployeeItem employee
+                 in selectedEmployees)
+        {
+            try
+            {
+                await _scheduleRepository
+                    .AssignScheduleAsync(
+                        employee.UserId,
+                        scheduleItem.Schedule.Id,
+                        dateFrom);
+
+                successCount++;
+
+                resultLines.Add(
+                    $"✓ {employee.UserName} ({employee.UserId})");
+            }
+            catch (Exception ex)
+            {
+                resultLines.Add(
+                    $"✗ {employee.UserName} ({employee.UserId}) — {ex.Message}");
+            }
+        }
+
+        await LoadAssignmentsAsync();
+
+        MessageBox.Show(
+            $"График: {scheduleItem.Schedule.Name}\n" +
+            $"Дата начала: {dateFrom:dd.MM.yyyy}\n\n" +
+            $"Успешно: {successCount} из {selectedEmployees.Count}\n\n" +
+            string.Join(
+                Environment.NewLine,
+                resultLines),
+            "Назначение графика",
+            MessageBoxButton.OK,
+            successCount == selectedEmployees.Count
+                ? MessageBoxImage.Information
+                : MessageBoxImage.Warning);
+    }
+
+    private async void DeleteAssignment_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (AssignmentsGrid.SelectedItem
+            is not EmployeeScheduleRow selected)
+        {
+            MessageBox.Show(
+                "Выберите назначение графика в таблице.",
+                "Удаление назначения",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+
+            return;
+        }
+
+        MessageBoxResult result =
+            MessageBox.Show(
+                $"Удалить назначение графика?\n\n" +
+                $"Сотрудник: {selected.UserName}\n" +
+                $"UserID: {selected.UserId}\n" +
+                $"График: {selected.ScheduleName}\n" +
+                $"С даты: {selected.DateFrom}" +
+                (string.IsNullOrWhiteSpace(selected.DateTo)
+                    ? ""
+                    : $"\nПо дату: {selected.DateTo}"),
+                "Удаление назначения",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+        if (result != MessageBoxResult.Yes)
+            return;
+
         try
         {
-            await _scheduleRepository
-                .AssignScheduleAsync(
-                    employee.UserId,
-                    scheduleItem.Schedule.Id,
-                    DateFromPicker.SelectedDate.Value.Date);
+            bool deleted =
+                await _scheduleRepository
+                    .DeleteEmployeeAssignmentAsync(
+                        selected.AssignmentId);
+
+            if (!deleted)
+            {
+                MessageBox.Show(
+                    "Назначение уже отсутствует в базе.",
+                    "Удаление назначения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                await LoadAssignmentsAsync();
+                return;
+            }
 
             await LoadAssignmentsAsync();
 
             MessageBox.Show(
-                $"Сотруднику «{employee.UserName}» назначен график " +
-                $"«{scheduleItem.Schedule.Name}».",
-                "Назначение графика",
+                "Назначение графика удалено.",
+                "Удаление назначения",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -272,10 +407,52 @@ public partial class EmployeeScheduleWindow : Window
         {
             MessageBox.Show(
                 ex.ToString(),
-                "Ошибка назначения графика",
+                "Ошибка удаления назначения",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
+    }
+
+    private void SelectAllEmployees_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        foreach (EmployeeScheduleEmployeeItem employee
+                 in _employees)
+        {
+            employee.IsSelected = true;
+        }
+
+        UpdateSelectedEmployeesText();
+    }
+
+    private void ClearEmployees_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        foreach (EmployeeScheduleEmployeeItem employee
+                 in _employees)
+        {
+            employee.IsSelected = false;
+        }
+
+        UpdateSelectedEmployeesText();
+    }
+
+    private void EmployeeCheckBox_Changed(
+        object sender,
+        RoutedEventArgs e)
+    {
+        UpdateSelectedEmployeesText();
+    }
+
+    private void UpdateSelectedEmployeesText()
+    {
+        int count =
+            _employees.Count(x => x.IsSelected);
+
+        SelectedEmployeesText.Text =
+            $"Отмечено: {count}";
     }
 
     private async void Refresh_Click(
@@ -293,14 +470,44 @@ public partial class EmployeeScheduleWindow : Window
     }
 }
 
-public class EmployeeScheduleEmployeeItem
+public class EmployeeScheduleEmployeeItem :
+    INotifyPropertyChanged
 {
+    private bool _isSelected;
+
     public string UserId { get; set; } = "";
 
     public string UserName { get; set; } = "";
 
+    public bool IsSelected
+    {
+        get => _isSelected;
+
+        set
+        {
+            if (_isSelected == value)
+                return;
+
+            _isSelected = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string DisplayName =>
         $"{UserName} ({UserId})";
+
+    public event PropertyChangedEventHandler?
+        PropertyChanged;
+
+    private void OnPropertyChanged(
+        [CallerMemberName]
+        string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(
+            this,
+            new PropertyChangedEventArgs(
+                propertyName));
+    }
 }
 
 public class EmployeeScheduleScheduleItem
@@ -316,6 +523,8 @@ public class EmployeeScheduleScheduleItem
 
 public class EmployeeScheduleRow
 {
+    public long AssignmentId { get; set; }
+
     public string UserId { get; set; } = "";
 
     public string UserName { get; set; } = "";

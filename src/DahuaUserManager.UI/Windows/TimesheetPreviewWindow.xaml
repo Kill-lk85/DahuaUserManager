@@ -1,0 +1,58 @@
+﻿<Window x:Class="DahuaUserManager.UI.Windows.TimesheetPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Предпросмотр табеля"
+        Height="760"
+        Width="1450"
+        MinHeight="600"
+        MinWidth="1000"
+        WindowStartupLocation="CenterOwner">
+
+    <DockPanel Margin="12">
+
+        <StackPanel DockPanel.Dock="Top"
+                    Margin="0,0,0,10">
+
+            <TextBlock Text="Предпросмотр табеля учёта рабочего времени"
+                       FontSize="22"
+                       FontWeight="Bold"/>
+
+            <TextBlock x:Name="PeriodText"
+                       Foreground="Gray"
+                       Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,10,0,0">
+
+            <Button x:Name="SaveExcelButton"
+                    Content="Сохранить Excel..."
+                    Width="150"
+                    Height="36"
+                    Margin="4"
+                    IsEnabled="False"
+                    Click="SaveExcel_Click"/>
+
+            <Button Content="Закрыть"
+                    Width="110"
+                    Height="36"
+                    Margin="4"
+                    IsCancel="True"/>
+        </StackPanel>
+
+        <Grid>
+            <TextBlock x:Name="LoadingText"
+                       Text="Формирование предпросмотра..."
+                       FontSize="18"
+                       Foreground="Gray"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+
+            <TabControl x:Name="MonthsTabControl"
+                        Visibility="Collapsed"/>
+        </Grid>
+
+    </DockPanel>
+</Window>

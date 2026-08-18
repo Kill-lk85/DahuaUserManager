@@ -2,6 +2,7 @@
 using DahuaUserManager.Api.Clients;
 using DahuaUserManager.Models.Database;
 using DahuaUserManager.Models.Entities;
+using DahuaUserManager.Models.Schedules;
 using DahuaUserManager.UI.Database;
 using Microsoft.Win32;
 using QuestPDF.Fluent;
@@ -22,6 +23,7 @@ public partial class AttendanceReportWindow : Window
 {
     private readonly AttendanceDatabase _attendanceDatabase = new();
     private readonly AttendanceRepository _attendanceRepository;
+    private readonly ScheduleRepository _scheduleRepository;
 
     private readonly ObservableCollection<AttendanceRecord> _records = new();
     private readonly ObservableCollection<AttendanceSummary> _summary = new();
@@ -38,6 +40,9 @@ public partial class AttendanceReportWindow : Window
 
         _attendanceRepository =
             new AttendanceRepository(_attendanceDatabase);
+
+        _scheduleRepository =
+            new ScheduleRepository(_attendanceDatabase);
 
         AttendanceGrid.ItemsSource = _records;
         SummaryGrid.ItemsSource = _summary;
@@ -920,7 +925,7 @@ public partial class AttendanceReportWindow : Window
         {
             MessageBox.Show(
                 "Сначала сформируйте отчёт.",
-                "Табель Excel",
+                "Табель",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -930,7 +935,7 @@ public partial class AttendanceReportWindow : Window
         {
             MessageBox.Show(
                 "Сначала нажмите «Сотрудники табеля» и отметьте сотрудников.",
-                "Табель Excel",
+                "Табель",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -941,493 +946,58 @@ public partial class AttendanceReportWindow : Window
         {
             MessageBox.Show(
                 "Выберите период.",
-                "Табель Excel",
+                "Табель",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
         }
 
-        DateTime dateFrom = DateFromPicker.SelectedDate.Value.Date;
-        DateTime dateTo = DateToPicker.SelectedDate.Value.Date;
+        DateTime dateFrom =
+            DateFromPicker.SelectedDate.Value.Date;
+
+        DateTime dateTo =
+            DateToPicker.SelectedDate.Value.Date;
 
         if (dateFrom > dateTo)
         {
             MessageBox.Show(
                 "Дата начала не может быть позже даты окончания.",
-                "Табель Excel",
+                "Табель",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
         }
 
-        // Сотрудники для табеля.
-        var selectedEmployees = _allLoadedRecords
-            .Where(x =>
-                !string.IsNullOrWhiteSpace(x.UserId) &&
-                _timesheetSelectedUserIds.Contains(x.UserId))
-            .GroupBy(x => x.UserId)
-            .Select(g => new EmployeeSelectionItem
-            {
-                UserId = g.Key,
-                UserName = g
-                    .Select(x => x.UserName)
-                    .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x))
-                    ?? g.Key
-            })
-            .OrderBy(x => x.UserName)
-            .ThenBy(x => x.UserId)
-            .ToList();
+        var records =
+            _allLoadedRecords
+                .Where(x =>
+                    !string.IsNullOrWhiteSpace(x.UserId) &&
+                    _timesheetSelectedUserIds.Contains(x.UserId))
+                .ToList();
 
-        if (selectedEmployees.Count == 0)
+        if (records.Count == 0)
         {
             MessageBox.Show(
                 "Для выбранных сотрудников нет данных.",
-                "Табель Excel",
+                "Табель",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
         }
 
-        var dialog = new SaveFileDialog
-        {
-            Title = "Сохранить табель учёта рабочего времени",
-            Filter = "Excel (*.xlsx)|*.xlsx",
-            FileName =
-                $"Табель_{dateFrom:yyyy-MM-dd}_{dateTo:yyyy-MM-dd}.xlsx"
-        };
-
-        if (dialog.ShowDialog() != true)
-            return;
-
-        try
-        {
-            using var workbook = new XLWorkbook();
-
-            CultureInfo ru =
-                CultureInfo.GetCultureInfo("ru-RU");
-
-            // Если выбран период через несколько месяцев,
-            // каждый месяц создаём отдельным листом.
-            DateTime monthCursor =
-                new DateTime(dateFrom.Year, dateFrom.Month, 1);
-
-            DateTime lastMonth =
-                new DateTime(dateTo.Year, dateTo.Month, 1);
-
-            while (monthCursor <= lastMonth)
+        var preview =
+            new TimesheetPreviewWindow(
+                records,
+                _timesheetSelectedUserIds,
+                dateFrom,
+                dateTo)
             {
-                int daysInMonth =
-                    DateTime.DaysInMonth(
-                        monthCursor.Year,
-                        monthCursor.Month);
+                Owner = this
+            };
 
-                DateTime monthStart =
-                    monthCursor;
-
-                DateTime monthEnd =
-                    monthCursor.AddMonths(1).AddDays(-1);
-
-                DateTime effectiveFrom =
-                    dateFrom > monthStart
-                        ? dateFrom
-                        : monthStart;
-
-                DateTime effectiveTo =
-                    dateTo < monthEnd
-                        ? dateTo
-                        : monthEnd;
-
-                string monthName =
-                    ru.DateTimeFormat
-                        .GetMonthName(monthCursor.Month);
-
-                monthName =
-                    char.ToUpper(monthName[0], ru) +
-                    monthName[1..];
-
-                string sheetName =
-                    $"{monthName} {monthCursor.Year}";
-
-                if (sheetName.Length > 31)
-                    sheetName = sheetName[..31];
-
-                var sheet =
-                    workbook.Worksheets.Add(sheetName);
-
-                // ----------------------------------------------------
-                // Макет как в образце:
-                // № п/п | Ф.И.О. | Разряд | Профессия | 1..31 |
-                // Факт. работы | Командировки | Отпуск | Болезнь | А
-                // ----------------------------------------------------
-
-                int colNumber = 1;
-                int colName = 2;
-                int colGrade = 3;
-                int colProfession = 4;
-                int firstDayCol = 5;
-                int lastDayCol = firstDayCol + daysInMonth - 1;
-                int colFact = lastDayCol + 1;
-                int colTrip = colFact + 1;
-                int colVacation = colFact + 2;
-                int colSick = colFact + 3;
-                int colUnpaid = colFact + 4;
-                int lastCol = colUnpaid;
-
-                // Заголовок.
-                sheet.Range(
-                        1,
-                        1,
-                        1,
-                        lastCol)
-                    .Merge();
-
-                sheet.Cell(1, 1).Value =
-                    "ТАБЕЛЬ УЧЁТА РАБОЧЕГО ВРЕМЕНИ";
-
-                sheet.Cell(1, 1)
-                    .Style.Font.Bold = true;
-
-                sheet.Cell(1, 1)
-                    .Style.Font.FontSize = 16;
-
-                sheet.Cell(1, 1)
-                    .Style.Alignment.Horizontal =
-                    XLAlignmentHorizontalValues.Center;
-
-                sheet.Range(
-                        2,
-                        1,
-                        2,
-                        lastCol)
-                    .Merge();
-
-                sheet.Cell(2, 1).Value =
-                    $"{monthName} {monthCursor.Year} г.   " +
-                    $"Период данных: {effectiveFrom:dd.MM.yyyy} — " +
-                    $"{effectiveTo:dd.MM.yyyy}";
-
-                sheet.Cell(2, 1)
-                    .Style.Alignment.Horizontal =
-                    XLAlignmentHorizontalValues.Center;
-
-                const int headerRow = 4;
-
-                sheet.Cell(headerRow, colNumber).Value =
-                    "№ п/п";
-
-                sheet.Cell(headerRow, colName).Value =
-                    "Ф.И.О.";
-
-                sheet.Cell(headerRow, colGrade).Value =
-                    "Разряд";
-
-                sheet.Cell(headerRow, colProfession).Value =
-                    "Профессия";
-
-                // Дни месяца.
-                for (int day = 1;
-                     day <= daysInMonth;
-                     day++)
-                {
-                    int column =
-                        firstDayCol + day - 1;
-
-                    sheet.Cell(headerRow, column).Value =
-                        day;
-
-                    DateTime date =
-                        new DateTime(
-                            monthCursor.Year,
-                            monthCursor.Month,
-                            day);
-
-                    sheet.Cell(headerRow, column)
-                        .Style.Alignment.Horizontal =
-                        XLAlignmentHorizontalValues.Center;
-
-                    // Суббота / воскресенье.
-                    if (date.DayOfWeek == DayOfWeek.Saturday ||
-                        date.DayOfWeek == DayOfWeek.Sunday)
-                    {
-                        sheet.Cell(headerRow, column)
-                            .Style.Fill.BackgroundColor =
-                            XLColor.FromHtml("#D9EAD3");
-                    }
-                }
-
-                sheet.Cell(headerRow, colFact).Value =
-                    "Факт. работы";
-
-                sheet.Cell(headerRow, colTrip).Value =
-                    "Командировки (К)";
-
-                sheet.Cell(headerRow, colVacation).Value =
-                    "Труд. отпуск (О)";
-
-                sheet.Cell(headerRow, colSick).Value =
-                    "Болезнь (Б)";
-
-                sheet.Cell(headerRow, colUnpaid).Value =
-                    "Отпуск без сохр. з/п (А)";
-
-                sheet.Range(
-                        headerRow,
-                        1,
-                        headerRow,
-                        lastCol)
-                    .Style.Font.Bold = true;
-
-                sheet.Range(
-                        headerRow,
-                        1,
-                        headerRow,
-                        lastCol)
-                    .Style.Alignment.Vertical =
-                    XLAlignmentVerticalValues.Center;
-
-                sheet.Range(
-                        headerRow,
-                        1,
-                        headerRow,
-                        lastCol)
-                    .Style.Alignment.Horizontal =
-                    XLAlignmentHorizontalValues.Center;
-
-                sheet.Range(
-                        headerRow,
-                        1,
-                        headerRow,
-                        lastCol)
-                    .Style.Alignment.WrapText = true;
-
-                int row = headerRow + 1;
-                int number = 1;
-
-                foreach (EmployeeSelectionItem employee
-                         in selectedEmployees)
-                {
-                    sheet.Cell(row, colNumber).Value =
-                        number;
-
-                    sheet.Cell(row, colName).Value =
-                        employee.UserName;
-
-                    // Разряд и профессию пока оставляем пустыми:
-                    // в данных контроллеров их нет.
-                    sheet.Cell(row, colGrade).Value = "";
-                    sheet.Cell(row, colProfession).Value = "";
-
-                    double totalCreditedHours = 0;
-
-                    for (int day = 1;
-                         day <= daysInMonth;
-                         day++)
-                    {
-                        DateTime date =
-                            new DateTime(
-                                monthCursor.Year,
-                                monthCursor.Month,
-                                day);
-
-                        int column =
-                            firstDayCol + day - 1;
-
-                        // За пределами выбранного пользователем периода
-                        // ячейка остаётся пустой.
-                        if (date < effectiveFrom ||
-                            date > effectiveTo)
-                        {
-                            continue;
-                        }
-
-                        // ТАБЕЛЬ НЕ УЧИТЫВАЕТ промежуточные отсутствия.
-                        // Берём только:
-                        // первый приход дня -> последний уход дня.
-                        List<AttendanceRecord> dayEvents =
-                            _allLoadedRecords
-                                .Where(x =>
-                                    x.UserId == employee.UserId &&
-                                    ParseReportDate(x.Date) == date)
-                                .OrderBy(x => x.CreateTimeValue)
-                                .ToList();
-
-                        AttendanceRecord? firstEntry =
-                            dayEvents
-                                .FirstOrDefault(
-                                    x => x.Event == "Вход");
-
-                        AttendanceRecord? lastExit =
-                            dayEvents
-                                .LastOrDefault(
-                                    x => x.Event == "Выход");
-
-                        // Если нет полного прихода + ухода,
-                        // табель за день не заполняем.
-                        if (firstEntry == null ||
-                            lastExit == null)
-                        {
-                            continue;
-                        }
-
-                        if (!TryConvertUnixTime(
-                                firstEntry.CreateTime,
-                                out DateTime entryTime) ||
-                            !TryConvertUnixTime(
-                                lastExit.CreateTime,
-                                out DateTime exitTime))
-                        {
-                            continue;
-                        }
-
-                        TimeSpan presence =
-                            exitTime - entryTime;
-
-                        if (presence <= TimeSpan.Zero)
-                            continue;
-
-                        // Правило пользователя:
-                        // 8 часов и более -> 8.
-                        // Менее 8 -> реальная разница
-                        // первого прихода и последнего ухода.
-                        double creditedHours =
-                            presence.TotalHours >= 8
-                                ? 8
-                                : Math.Round(
-                                    presence.TotalHours,
-                                    2,
-                                    MidpointRounding.AwayFromZero);
-
-                        if (creditedHours <= 0)
-                            continue;
-
-                        sheet.Cell(row, column).Value =
-                            creditedHours;
-
-                        sheet.Cell(row, column)
-                            .Style.NumberFormat.Format =
-                            "0.##";
-
-                        sheet.Cell(row, column)
-                            .Style.Alignment.Horizontal =
-                            XLAlignmentHorizontalValues.Center;
-
-                        totalCreditedHours +=
-                            creditedHours;
-
-                        // Выходной подсвечиваем,
-                        // но данные при наличии проходов всё равно ставим.
-                        if (date.DayOfWeek == DayOfWeek.Saturday ||
-                            date.DayOfWeek == DayOfWeek.Sunday)
-                        {
-                            sheet.Cell(row, column)
-                                .Style.Fill.BackgroundColor =
-                                XLColor.FromHtml("#E2F0D9");
-                        }
-                    }
-
-                    sheet.Cell(row, colFact).Value =
-                        Math.Round(
-                            totalCreditedHours,
-                            2,
-                            MidpointRounding.AwayFromZero);
-
-                    sheet.Cell(row, colFact)
-                        .Style.NumberFormat.Format =
-                        "0.##";
-
-                    // Эти колонки пока пустые,
-                    // потому что контроллеры не знают
-                    // командировки / отпуска / больничные.
-                    sheet.Cell(row, colTrip).Value = "";
-                    sheet.Cell(row, colVacation).Value = "";
-                    sheet.Cell(row, colSick).Value = "";
-                    sheet.Cell(row, colUnpaid).Value = "";
-
-                    row++;
-                    number++;
-                }
-
-                // ----------------------------------------------------
-                // Оформление
-                // ----------------------------------------------------
-
-                var usedTable =
-                    sheet.Range(
-                        headerRow,
-                        1,
-                        row - 1,
-                        lastCol);
-
-                usedTable.Style.Border.TopBorder =
-                    XLBorderStyleValues.Thin;
-
-                usedTable.Style.Border.BottomBorder =
-                    XLBorderStyleValues.Thin;
-
-                usedTable.Style.Border.LeftBorder =
-                    XLBorderStyleValues.Thin;
-
-                usedTable.Style.Border.RightBorder =
-                    XLBorderStyleValues.Thin;
-
-                usedTable.Style.Alignment.Vertical =
-                    XLAlignmentVerticalValues.Center;
-
-                // Ширина колонок.
-                sheet.Column(colNumber).Width = 7;
-                sheet.Column(colName).Width = 28;
-                sheet.Column(colGrade).Width = 10;
-                sheet.Column(colProfession).Width = 22;
-
-                for (int column = firstDayCol;
-                     column <= lastDayCol;
-                     column++)
-                {
-                    sheet.Column(column).Width = 4.5;
-                }
-
-                sheet.Column(colFact).Width = 12;
-                sheet.Column(colTrip).Width = 14;
-                sheet.Column(colVacation).Width = 14;
-                sheet.Column(colSick).Width = 12;
-                sheet.Column(colUnpaid).Width = 18;
-
-                sheet.Row(headerRow).Height = 42;
-
-                sheet.SheetView.FreezeRows(headerRow);
-                sheet.SheetView.FreezeColumns(colProfession);
-
-                sheet.PageSetup.PageOrientation =
-                    XLPageOrientation.Landscape;
-
-                sheet.PageSetup.FitToPages(1, 0);
-
-                sheet.PageSetup.Margins.Top = 0.25;
-                sheet.PageSetup.Margins.Bottom = 0.25;
-                sheet.PageSetup.Margins.Left = 0.2;
-                sheet.PageSetup.Margins.Right = 0.2;
-
-                monthCursor =
-                    monthCursor.AddMonths(1);
-            }
-
-            workbook.SaveAs(dialog.FileName);
-
-            MessageBox.Show(
-                "Табель Excel сохранён.",
-                "Табель Excel",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(
-                ex.ToString(),
-                "Ошибка экспорта табеля",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
-        }
+        preview.ShowDialog();
     }
+
 
     private static bool TryParseDuration(
         string value,

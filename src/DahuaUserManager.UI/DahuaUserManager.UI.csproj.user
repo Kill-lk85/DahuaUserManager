@@ -32,6 +32,9 @@
     <Compile Update="Windows\TimesheetEmployeeSelectionWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Windows\TimesheetPreviewWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Windows\UserEditorWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

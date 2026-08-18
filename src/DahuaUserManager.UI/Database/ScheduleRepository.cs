@@ -461,6 +461,42 @@ public class ScheduleRepository
     }
 
     /// <summary>
+    /// Удалить конкретное назначение графика сотруднику.
+    /// Удаляется только запись EmployeeSchedules.
+    /// Сам график WorkSchedules не удаляется.
+    /// </summary>
+    public async Task<bool> DeleteEmployeeAssignmentAsync(
+        long assignmentId)
+    {
+        if (assignmentId <= 0)
+            return false;
+
+        await using var connection =
+            new SqliteConnection(
+                _database.ConnectionString);
+
+        await connection.OpenAsync();
+
+        await using var command =
+            connection.CreateCommand();
+
+        command.CommandText = """
+            DELETE FROM EmployeeSchedules
+            WHERE Id = $Id;
+            """;
+
+        command.Parameters.AddWithValue(
+            "$Id",
+            assignmentId);
+
+        int affected =
+            await command.ExecuteNonQueryAsync();
+
+        return affected > 0;
+    }
+
+
+    /// <summary>
     /// Получить историю назначений графиков сотрудника.
     /// </summary>
     public async Task<List<EmployeeSchedule>>
