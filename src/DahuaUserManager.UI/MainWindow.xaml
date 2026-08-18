@@ -11,9 +11,11 @@
             <MenuItem Header="Файл">
                 <MenuItem Header="Выход" Click="Exit_Click"/>
             </MenuItem>
+
             <MenuItem Header="Контроллеры">
                 <MenuItem Header="Управление..." Click="OpenControllerManager_Click"/>
             </MenuItem>
+
             <MenuItem Header="Пользователи">
                 <MenuItem Header="Новый пользователь..." Click="NewUser_Click"/>
                 <MenuItem Header="Изменить..." Click="EditUser_Click"/>
@@ -21,29 +23,54 @@
                 <MenuItem Header="Удалить с текущего" Click="DeleteSelected_Click"/>
                 <MenuItem Header="Удалить со всех" Click="DeleteSelectedFromAll_Click"/>
             </MenuItem>
+
             <MenuItem Header="Отчёты">
                 <MenuItem Header="Посещаемость..." Click="AttendanceReport_Click"/>
                 <Separator/>
                 <MenuItem Header="Графики работы..." Click="WorkSchedules_Click"/>
                 <MenuItem Header="Назначение графиков..." Click="EmployeeSchedules_Click"/>
             </MenuItem>
+
+            <MenuItem Header="Настройки">
+                <MenuItem Header="Настройки программы..." Click="ProgramSettings_Click"/>
+            </MenuItem>
+
             <MenuItem Header="Справка">
                 <MenuItem Header="О программе..." Click="About_Click"/>
             </MenuItem>
         </Menu>
+
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
                 <TextBlock x:Name="StatusText" Text="Готов"/>
             </StatusBarItem>
         </StatusBar>
-        <Border DockPanel.Dock="Left" Width="300" Background="#ECECEC" BorderBrush="#D0D0D0" BorderThickness="0,0,1,0">
+
+        <Border DockPanel.Dock="Left"
+                Width="300"
+                Background="#ECECEC"
+                BorderBrush="#D0D0D0"
+                BorderThickness="0,0,1,0">
             <StackPanel Margin="12">
-                <TextBlock Text="Контроллеры" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
-                <ListBox x:Name="ControllersList" Height="260" DisplayMemberPath="Name" SelectionChanged="ControllersList_SelectionChanged"/>
+                <TextBlock Text="Контроллеры"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Margin="0,0,0,12"/>
+
+                <ListBox x:Name="ControllersList"
+                         Height="260"
+                         DisplayMemberPath="Name"
+                         SelectionChanged="ControllersList_SelectionChanged"/>
+
                 <Separator Margin="0,15"/>
-                <Button Content="Управление контроллерами..." Height="38" Margin="0,5" Click="OpenControllerManager_Click"/>
+
+                <Button Content="Управление контроллерами..."
+                        Height="38"
+                        Margin="0,5"
+                        Click="OpenControllerManager_Click"/>
             </StackPanel>
         </Border>
+
         <Grid Margin="14">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -51,7 +78,13 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="HeaderText" Text="Пользователи" FontSize="24" FontWeight="Bold" Margin="0,0,0,12"/>
+
+            <TextBlock x:Name="HeaderText"
+                       Text="Пользователи"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,0,0,12"/>
+
             <ToolBar Grid.Row="1" Margin="0,0,0,10">
                 <Button Content="➕ Новый" Padding="10,4" Click="NewUser_Click"/>
                 <Button Content="✏ Изменить" Padding="10,4" Click="EditUser_Click"/>
@@ -63,17 +96,36 @@
                 <Separator/>
                 <Button Content="🔄 Обновить" Padding="10,4" Click="RefreshUsers_Click"/>
             </ToolBar>
+
             <Grid Grid.Row="2" Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="300"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Поиск:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="SearchBox" Grid.Column="1" Height="32" TextChanged="SearchBox_TextChanged"/>
-                <TextBlock x:Name="CountText" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Записей: 0"/>
+
+                <TextBlock Text="Поиск:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
+
+                <TextBox x:Name="SearchBox"
+                         Grid.Column="1"
+                         Height="32"
+                         TextChanged="SearchBox_TextChanged"/>
+
+                <TextBlock x:Name="CountText"
+                           Grid.Column="2"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Text="Записей: 0"/>
             </Grid>
-            <DataGrid x:Name="UsersGrid" Grid.Row="3" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
+
+            <DataGrid x:Name="UsersGrid"
+                      Grid.Row="3"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single">
+
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Новый пользователь..." Click="NewUser_Click"/>
@@ -85,6 +137,7 @@
                         <MenuItem Header="Удалить со всех" Click="DeleteSelectedFromAll_Click"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
+
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="RecNo" Binding="{Binding RecNo}" Width="80"/>
                     <DataGridTextColumn Header="UserID" Binding="{Binding UserId}" Width="100"/>

@@ -26,6 +26,9 @@
     <Compile Update="Windows\PhotoCaptureWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Windows\ProgramSettingsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Windows\TimesheetEmployeeSelectionWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

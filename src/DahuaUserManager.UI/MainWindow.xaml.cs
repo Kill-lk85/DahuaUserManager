@@ -37,6 +37,16 @@ namespace DahuaUserManager.UI
             Closing += MainWindow_Closing;
 
         }
+        private void ProgramSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new ProgramSettingsWindow
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
+        }
+
         private void AttendanceReport_Click(object sender, RoutedEventArgs e)
         {
             var window = new AttendanceReportWindow(_controllers)
@@ -263,21 +273,27 @@ namespace DahuaUserManager.UI
             }
         }
 
-        private void EditUser_Click(object sender, RoutedEventArgs e)
+        private async void EditUser_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            ControllerInfo? controller = GetSelectedController();
+            ControllerInfo? currentController =
+                GetSelectedController();
 
-            if (controller == null)
+            if (currentController == null)
             {
                 MessageBox.Show("Выберите контроллер.");
                 return;
             }
 
-            if (UsersGrid.SelectedItem is not AccessControlCard selected)
+            if (UsersGrid.SelectedItem
+                is not AccessControlCard selected)
             {
                 MessageBox.Show("Выберите пользователя.");
                 return;
             }
+
+            string originalUserId = selected.UserId;
 
             var user = new AccessUser
             {
@@ -296,19 +312,102 @@ namespace DahuaUserManager.UI
                 GetLastUserId(),
                 GetLastCardNumber(),
                 _controllers,
-                controller)
+                currentController)
             {
                 Owner = this
             };
 
-            if (window.ShowDialog() == true)
+            if (window.ShowDialog() != true)
+                return;
+
+            if (!string.Equals(
+                    originalUserId,
+                    window.User.UserId,
+                    StringComparison.OrdinalIgnoreCase))
             {
                 MessageBox.Show(
-                    $"Изменения подготовлены.\n\nUserID: {window.User.UserId}\nИмя: {window.User.FullName}",
-                    "Изменение пользователя");
+                    "Сейчас при редактировании нельзя менять UserID.\n\n" +
+                    $"Старый UserID: {originalUserId}\n" +
+                    $"Новый UserID: {window.User.UserId}",
+                    "Изменение пользователя",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
 
-                StatusText.Text = $"Подготовлено изменение UserID={window.User.UserId}";
+                return;
             }
+
+            List<ControllerInfo> targetControllers =
+                window.SelectedControllers.Count > 0
+                    ? window.SelectedControllers
+                    : new List<ControllerInfo>
+                    {
+                        currentController
+                    };
+
+            var resultLines = new List<string>();
+            int successCount = 0;
+
+            foreach (ControllerInfo controller
+                     in targetControllers)
+            {
+                try
+                {
+                    StatusText.Text =
+                        $"Обновление UserID={window.User.UserId} " +
+                        $"на {controller.IpAddress}...";
+
+                    bool updated =
+                        await _userService.UpdateUserAsync(
+                            controller.IpAddress,
+                            controller.Username,
+                            controller.Password,
+                            window.User);
+
+                    if (updated)
+                    {
+                        successCount++;
+
+                        resultLines.Add(
+                            $"✓ {controller.Name} " +
+                            $"({controller.IpAddress}) — изменён");
+                    }
+                    else
+                    {
+                        resultLines.Add(
+                            $"✗ {controller.Name} " +
+                            $"({controller.IpAddress}) — " +
+                            $"контроллер не подтвердил изменение");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    resultLines.Add(
+                        $"✗ {controller.Name} " +
+                        $"({controller.IpAddress}) — ошибка: " +
+                        ex.Message);
+                }
+            }
+
+            await RefreshUsersAsync();
+
+            SelectUserById(
+                window.User.UserId);
+
+            MessageBox.Show(
+                $"UserID: {window.User.UserId}\n" +
+                $"Имя: {window.User.FullName}\n\n" +
+                $"Успешно: {successCount} из {targetControllers.Count}\n\n" +
+                string.Join(
+                    Environment.NewLine,
+                    resultLines),
+                "Изменение пользователя",
+                MessageBoxButton.OK,
+                successCount == targetControllers.Count
+                    ? MessageBoxImage.Information
+                    : MessageBoxImage.Warning);
+
+            StatusText.Text =
+                $"Изменение UserID={window.User.UserId} завершено.";
         }
 
         private void UserPhoto_Click(object sender, RoutedEventArgs e)

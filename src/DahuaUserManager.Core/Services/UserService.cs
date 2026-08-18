@@ -26,6 +26,22 @@ public class UserService
             user.ValidTo ?? DateTime.Today.AddYears(10));
     }
 
+    public async Task<bool> UpdateUserAsync(
+        string ipAddress,
+        string username,
+        string password,
+        AccessUser user)
+    {
+        return await _rpcUser.UpdateUserAsync(
+            ipAddress,
+            username,
+            password,
+            user.UserId,
+            user.FullName,
+            user.ValidFrom ?? DateTime.Today,
+            user.ValidTo ?? DateTime.Today.AddYears(10));
+    }
+
     public async Task<bool> UploadUserPhotoAsync(
         string ipAddress,
         string username,

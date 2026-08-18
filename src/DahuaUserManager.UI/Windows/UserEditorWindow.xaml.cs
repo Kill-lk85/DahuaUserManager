@@ -3,7 +3,7 @@ using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using DahuaUserManager.Core.Managers;
+using System.Collections.ObjectModel;
 
 namespace DahuaUserManager.UI.Windows
 {
@@ -11,9 +11,14 @@ namespace DahuaUserManager.UI.Windows
     {
         private readonly int _lastUserId;
         private readonly int _nextUserId;
+
         private readonly List<ControllerInfo> _controllers;
+
+        private readonly ObservableCollection<ControllerInfo>
+            _controllerChoices = new();
+
         private readonly ControllerInfo? _selectedController;
-        private readonly ControllerManager _controllerManager = new();
+
         private readonly bool _isEditMode;
 
         private bool _isLoading;
@@ -21,9 +26,12 @@ namespace DahuaUserManager.UI.Windows
         public AccessUser User { get; private set; }
 
         public string PhotoPath { get; private set; } = "";
-        public List<ControllerInfo> SelectedControllers { get; } = new();
+
+        public List<ControllerInfo> SelectedControllers { get; } =
+            new();
 
         public int DepartId { get; private set; } = 1;
+
 
         public UserEditorWindow()
             : this(
@@ -40,6 +48,7 @@ namespace DahuaUserManager.UI.Windows
         {
         }
 
+
         public UserEditorWindow(
             AccessUser user,
             int lastUserId,
@@ -52,6 +61,7 @@ namespace DahuaUserManager.UI.Windows
                 null)
         {
         }
+
 
         public UserEditorWindow(
             AccessUser user,
@@ -69,6 +79,7 @@ namespace DahuaUserManager.UI.Windows
         {
         }
 
+
         public UserEditorWindow(
             AccessUser user,
             int lastUserId,
@@ -77,118 +88,265 @@ namespace DahuaUserManager.UI.Windows
             ControllerInfo? selectedController)
         {
             InitializeComponent();
-            _controllerManager.Load();
-
-            ControllersListBox.ItemsSource =
-                _controllerManager.Controllers;
 
             User = user;
 
             _lastUserId = lastUserId;
             _nextUserId = lastUserId + 1;
-            _controllers = controllers.ToList();
-            _selectedController = selectedController;
 
-            _isEditMode = !string.IsNullOrWhiteSpace(User.UserId);
+            _controllers =
+                controllers.ToList();
+
+            _selectedController =
+                selectedController;
+
+            _isEditMode =
+                !string.IsNullOrWhiteSpace(
+                    User.UserId);
+
+
+            // --------------------------------------------------------
+            // Локальный список выбора контроллеров.
+            //
+            // Контроллеры уже пришли из выбранной SQLite-базы
+            // через MainWindow.
+            //
+            // Создаём копии, чтобы галочки в окне пользователя
+            // не изменяли реальные настройки контроллеров в БД.
+            // --------------------------------------------------------
+
+            foreach (ControllerInfo controller
+                     in _controllers)
+            {
+                _controllerChoices.Add(
+                    CloneController(
+                        controller));
+            }
+
+
+            ControllersListBox.ItemsSource =
+                _controllerChoices;
+
 
             ApplyMode();
-            LoadUser(lastCardNumber);
-            SelectAllControllersButton.Click += (_, _) =>
+
+            LoadUser(
+                lastCardNumber);
+
+
+            SelectAllControllersButton.Click +=
+                (_, _) =>
+                {
+                    foreach (ControllerInfo controller
+                             in _controllerChoices)
+                    {
+                        controller.UseByDefault =
+                            true;
+                    }
+
+                    ControllersListBox.Items.Refresh();
+                };
+
+
+            ClearControllersButton.Click +=
+                (_, _) =>
+                {
+                    foreach (ControllerInfo controller
+                             in _controllerChoices)
+                    {
+                        controller.UseByDefault =
+                            false;
+                    }
+
+                    ControllersListBox.Items.Refresh();
+                };
+        }
+
+
+        private static ControllerInfo CloneController(
+            ControllerInfo source)
+        {
+            return new ControllerInfo
             {
-                foreach (ControllerInfo c in _controllerManager.Controllers)
-                    c.UseByDefault = true;
+                Name =
+                    source.Name,
 
-                ControllersListBox.Items.Refresh();
-            };
+                IpAddress =
+                    source.IpAddress,
 
-            ClearControllersButton.Click += (_, _) =>
-            {
-                foreach (ControllerInfo c in _controllerManager.Controllers)
-                    c.UseByDefault = false;
+                Username =
+                    source.Username,
 
-                ControllersListBox.Items.Refresh();
+                Password =
+                    source.Password,
+
+                Model =
+                    source.Model,
+
+                Firmware =
+                    source.Firmware,
+
+                ApiType =
+                    source.ApiType,
+
+                UseByDefault =
+                    source.UseByDefault,
+
+                IsOnline =
+                    source.IsOnline,
+
+                AttendanceRole =
+                    source.AttendanceRole
             };
         }
+
 
         private void ApplyMode()
         {
             if (!_isEditMode)
                 return;
 
-            Title = "Изменение пользователя";
-            Width = 540;
+            Title =
+                "Изменение пользователя";
+
+            Width =
+                540;
+
 
             if (Content is DockPanel)
                 return;
 
-            var mainGrid = (Grid)((Border?)null ?? Content);
 
-            mainGrid.ColumnDefinitions[1].Width = new GridLength(0);
+            var mainGrid =
+                (Grid)((Border?)null ?? Content);
+
+            mainGrid.ColumnDefinitions[1].Width =
+                new GridLength(0);
         }
 
-        private void LoadUser(string lastCardNumber)
-        {
-            _isLoading = true;
 
-            UserIdBox.Text = User.UserId;
-            FullNameBox.Text = User.FullName;
-            CardNumberBox.Text = User.CardNumber;
+        private void LoadUser(
+            string lastCardNumber)
+        {
+            _isLoading =
+                true;
+
+
+            UserIdBox.Text =
+                User.UserId;
+
+            FullNameBox.Text =
+                User.FullName;
+
+            CardNumberBox.Text =
+                User.CardNumber;
+
 
             ValidFromPicker.SelectedDate =
-                User.ValidFrom ?? DateTime.Today;
+                User.ValidFrom ??
+                DateTime.Today;
+
 
             ValidToPicker.SelectedDate =
-                User.ValidTo ?? DateTime.Today.AddYears(10);
+                User.ValidTo ??
+                DateTime.Today.AddYears(10);
 
-            IsValidBox.IsChecked = User.IsValid;
+
+            IsValidBox.IsChecked =
+                User.IsValid;
+
 
             LastUserIdText.Text =
-                $"Последний UserID: {_lastUserId}; следующий: {_nextUserId}";
+                $"Последний UserID: {_lastUserId}; " +
+                $"следующий: {_nextUserId}";
+
 
             LastCardText.Text =
-                string.IsNullOrWhiteSpace(lastCardNumber)
+                string.IsNullOrWhiteSpace(
+                    lastCardNumber)
                     ? "Последняя карта: —"
                     : $"Последняя карта: {lastCardNumber}";
 
-            _isLoading = false;
+
+            _isLoading =
+                false;
+
+
             ControllersListBox.Items.Refresh();
         }
 
-        private void UserIdBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+
+        private void UserIdBox_TextChanged(
+            object sender,
+            TextChangedEventArgs e)
         {
             if (_isLoading)
                 return;
 
-            if (string.IsNullOrWhiteSpace(CardNumberBox.Text))
-                CardNumberBox.Text = UserIdBox.Text.Trim();
-        }
 
-        private void UseNextUserId_Click(object sender, RoutedEventArgs e)
-        {
-            UserIdBox.Text = _nextUserId.ToString();
-
-            if (string.IsNullOrWhiteSpace(CardNumberBox.Text))
-                CardNumberBox.Text = UserIdBox.Text;
-        }
-
-        private void CardEqualsUserId_Click(object sender, RoutedEventArgs e)
-        {
-            CardNumberBox.Text = UserIdBox.Text.Trim();
-        }
-
-        private void SelectPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new OpenFileDialog
+            if (string.IsNullOrWhiteSpace(
+                    CardNumberBox.Text))
             {
-                Title = "Выберите фото пользователя",
-                Filter = "Изображения (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|Все файлы (*.*)|*.*"
-            };
+                CardNumberBox.Text =
+                    UserIdBox.Text.Trim();
+            }
+        }
+
+
+        private void UseNextUserId_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            UserIdBox.Text =
+                _nextUserId.ToString();
+
+
+            if (string.IsNullOrWhiteSpace(
+                    CardNumberBox.Text))
+            {
+                CardNumberBox.Text =
+                    UserIdBox.Text;
+            }
+        }
+
+
+        private void CardEqualsUserId_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            CardNumberBox.Text =
+                UserIdBox.Text.Trim();
+        }
+
+
+        private void SelectPhoto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            var dialog =
+                new OpenFileDialog
+                {
+                    Title =
+                        "Выберите фото пользователя",
+
+                    Filter =
+                        "Изображения (*.jpg;*.jpeg;*.png)|" +
+                        "*.jpg;*.jpeg;*.png|" +
+                        "Все файлы (*.*)|*.*"
+                };
+
 
             if (dialog.ShowDialog(this) == true)
-                SetPhoto(dialog.FileName);
+            {
+                SetPhoto(
+                    dialog.FileName);
+            }
         }
 
-        private void CapturePhotoFromController_Click(object sender, RoutedEventArgs e)
+
+        private void CapturePhotoFromController_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             if (_controllers.Count == 0)
             {
@@ -201,83 +359,181 @@ namespace DahuaUserManager.UI.Windows
                 return;
             }
 
-            string userId = UserIdBox.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(userId))
-                userId = "new";
+            string userId =
+                UserIdBox.Text.Trim();
 
-            var window = new PhotoCaptureWindow(
-                _controllers,
-                _selectedController,
-                userId)
+
+            if (string.IsNullOrWhiteSpace(
+                    userId))
             {
-                Owner = this
-            };
+                userId =
+                    "new";
+            }
+
+
+            var window =
+                new PhotoCaptureWindow(
+                    _controllers,
+                    _selectedController,
+                    userId)
+                {
+                    Owner = this
+                };
+
 
             if (window.ShowDialog() == true)
-                SetPhoto(window.PhotoPath);
+            {
+                SetPhoto(
+                    window.PhotoPath);
+            }
         }
 
-        private void ClearPhoto_Click(object sender, RoutedEventArgs e)
+
+        private void ClearPhoto_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             PhotoPath = "";
+
             PhotoPathText.Text = "";
+
             PhotoPreview.Source = null;
-            NoPhotoText.Visibility = Visibility.Visible;
+
+            NoPhotoText.Visibility =
+                Visibility.Visible;
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+
+        private void Save_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            User.UserId = UserIdBox.Text.Trim();
-            User.FullName = FullNameBox.Text.Trim();
-            User.CardNumber = CardNumberBox.Text.Trim();
-            User.ValidFrom = ValidFromPicker.SelectedDate ?? DateTime.Today;
-            User.ValidTo = ValidToPicker.SelectedDate ?? DateTime.Today.AddYears(10);
-            User.IsValid = IsValidBox.IsChecked == true;
+            User.UserId =
+                UserIdBox.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(User.UserId))
+            User.FullName =
+                FullNameBox.Text.Trim();
+
+            User.CardNumber =
+                CardNumberBox.Text.Trim();
+
+            User.ValidFrom =
+                ValidFromPicker.SelectedDate ??
+                DateTime.Today;
+
+            User.ValidTo =
+                ValidToPicker.SelectedDate ??
+                DateTime.Today.AddYears(10);
+
+            User.IsValid =
+                IsValidBox.IsChecked == true;
+
+
+            if (string.IsNullOrWhiteSpace(
+                    User.UserId))
             {
-                MessageBox.Show("Введите UserID.");
+                MessageBox.Show(
+                    "Введите UserID.");
+
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(User.FullName))
+
+            if (string.IsNullOrWhiteSpace(
+                    User.FullName))
             {
-                MessageBox.Show("Введите имя пользователя.");
+                MessageBox.Show(
+                    "Введите имя пользователя.");
+
                 return;
             }
+
+
+            // --------------------------------------------------------
+            // Собираем выбранные контроллеры.
+            //
+            // Теперь никаких ControllerManager / appsettings.json.
+            // Используется только список текущей выбранной базы.
+            // --------------------------------------------------------
 
             SelectedControllers.Clear();
 
-            foreach (ControllerInfo controller in _controllerManager.Controllers)
+
+            foreach (ControllerInfo controller
+                     in _controllerChoices)
             {
-                if (controller.UseByDefault)
-                    SelectedControllers.Add(controller);
+                if (!controller.UseByDefault)
+                    continue;
+
+
+                // Находим оригинальный объект
+                // из текущего списка контроллеров.
+                ControllerInfo? original =
+                    _controllers.FirstOrDefault(
+                        x =>
+                            x.IpAddress.Equals(
+                                controller.IpAddress,
+                                StringComparison.OrdinalIgnoreCase));
+
+
+                if (original != null)
+                {
+                    SelectedControllers.Add(
+                        original);
+                }
             }
-            DialogResult = true;
+
+
+            DialogResult =
+                true;
+
             Close();
         }
 
-        private void Cancel_Click(object sender, RoutedEventArgs e)
+
+        private void Cancel_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            DialogResult = false;
+            DialogResult =
+                false;
+
             Close();
         }
 
-        private void SetPhoto(string fileName)
-        {
-            PhotoPath = fileName;
-            PhotoPathText.Text = PhotoPath;
 
-            var image = new BitmapImage();
+        private void SetPhoto(
+            string fileName)
+        {
+            PhotoPath =
+                fileName;
+
+            PhotoPathText.Text =
+                PhotoPath;
+
+
+            var image =
+                new BitmapImage();
+
             image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.UriSource = new Uri(PhotoPath);
+
+            image.CacheOption =
+                BitmapCacheOption.OnLoad;
+
+            image.UriSource =
+                new Uri(PhotoPath);
+
             image.EndInit();
+
             image.Freeze();
 
-            PhotoPreview.Source = image;
-            NoPhotoText.Visibility = Visibility.Collapsed;
+
+            PhotoPreview.Source =
+                image;
+
+            NoPhotoText.Visibility =
+                Visibility.Collapsed;
         }
     }
 }
