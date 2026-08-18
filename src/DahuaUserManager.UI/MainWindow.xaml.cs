@@ -2,10 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using DahuaUserManager.Api.Clients;
-using DahuaUserManager.Core.Managers;
 using DahuaUserManager.Core.Services;
 using DahuaUserManager.Models.Entities;
 using DahuaUserManager.UI.Windows;
+using DahuaUserManager.UI.Database;
 using DahuaUserManager.UI.Services;
 namespace DahuaUserManager.UI
 {
@@ -13,7 +13,9 @@ namespace DahuaUserManager.UI
     {
         private readonly RecordFinderClient _finder = new();
         private readonly UserService _userService = new();
-        private readonly ControllerManager _controllerManager = new();
+
+        private readonly AttendanceDatabase _database = new();
+        private readonly ControllerRepository _controllerRepository;
 
         private readonly ObservableCollection<ControllerInfo> _controllers = new();
         private readonly ObservableCollection<AccessControlCard> _allUsers = new();
@@ -25,13 +27,14 @@ namespace DahuaUserManager.UI
         {
             InitializeComponent();
 
+            _controllerRepository =
+                new ControllerRepository(_database);
+
             ControllersList.ItemsSource = _controllers;
             UsersGrid.ItemsSource = _visibleUsers;
 
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
-
-            LoadControllers();
 
         }
         private void AttendanceReport_Click(object sender, RoutedEventArgs e)
@@ -61,29 +64,64 @@ namespace DahuaUserManager.UI
 
             window.ShowDialog();
         }
-        private void OpenControllerManager_Click(object sender, RoutedEventArgs e)
+        private async void OpenControllerManager_Click(object sender, RoutedEventArgs e)
         {
-            var window = new ControllerManagerWindow { Owner = this };
+            var window = new ControllerManagerWindow
+            {
+                Owner = this
+            };
+
             window.ShowDialog();
-            LoadControllers();
+
+            await LoadControllersAsync();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
 
-        private void LoadControllers()
+        private async Task LoadControllersAsync()
         {
             _isLoadingControllers = true;
 
-            _controllerManager.Load();
-            _controllers.Clear();
+            try
+            {
+                await _database.InitializeAsync();
 
-            foreach (var controller in _controllerManager.Controllers)
-                _controllers.Add(controller);
+                List<ControllerInfo> controllers =
+                    await _controllerRepository.GetAllAsync();
 
-            if (_controllers.Count > 0)
-                ControllersList.SelectedIndex = 0;
+                _controllers.Clear();
 
-            _isLoadingControllers = false;
+                foreach (ControllerInfo controller in controllers)
+                    _controllers.Add(controller);
+
+                if (_controllers.Count > 0)
+                {
+                    ControllersList.SelectedIndex = 0;
+                }
+                else
+                {
+                    _allUsers.Clear();
+                    _visibleUsers.Clear();
+
+                    HeaderText.Text = "Пользователи";
+                    CountText.Text = "Записей: 0";
+                    StatusText.Text = "В выбранной базе нет контроллеров.";
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = "Ошибка загрузки контроллеров.";
+
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка загрузки контроллеров",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                _isLoadingControllers = false;
+            }
         }
 
         private ControllerInfo? GetSelectedController()
@@ -314,9 +352,22 @@ namespace DahuaUserManager.UI
             window.ShowDialog();
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             DataGridLayoutService.Load(UsersGrid, "UsersGrid");
+
+            await LoadControllersAsync();
+
+            DatabaseProfile currentDatabase =
+                DatabaseManager.Instance.CurrentDatabase;
+
+            Title =
+                $"Dahua User Manager — {currentDatabase.Name}";
+
+            StatusText.Text =
+                _controllers.Count > 0
+                    ? $"База: {currentDatabase.Name}"
+                    : $"База: {currentDatabase.Name}. Контроллеры не настроены.";
         }
         private void About_Click(object sender, RoutedEventArgs e)
         {

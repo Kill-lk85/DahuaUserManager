@@ -20,13 +20,10 @@ public class AttendanceDatabase
     /// <summary>
     /// Текущая выбранная база.
     ///
-    /// ВАЖНО:
-    /// путь НЕ сохраняется в поле.
-    ///
-    /// Поэтому если пользователь позже
-    /// переключит объект, существующие
-    /// репозитории автоматически начнут
-    /// работать с новой БД.
+    /// Путь не сохраняется в поле.
+    /// Поэтому при выборе другого объекта
+    /// репозитории начинают работать
+    /// с выбранной базой.
     /// </summary>
     public string DatabasePath =>
         _databaseManager.CurrentDatabasePath;
@@ -42,8 +39,6 @@ public class AttendanceDatabase
 
     public async Task InitializeAsync()
     {
-        // Папка уже создаётся DatabaseManager,
-        // но дополнительная проверка не повредит.
         string? directory =
             Path.GetDirectoryName(
                 DatabasePath);
@@ -192,6 +187,60 @@ public class AttendanceDatabase
             (
                 UserId,
                 DateFrom
+            );
+
+
+            ------------------------------------------------------------
+            -- КОНТРОЛЛЕРЫ ОБЪЕКТА
+            ------------------------------------------------------------
+
+            CREATE TABLE IF NOT EXISTS Controllers
+            (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                Name TEXT NOT NULL,
+
+                IpAddress TEXT NOT NULL,
+
+                Username TEXT NOT NULL,
+
+                Password TEXT NOT NULL,
+
+                Model TEXT NOT NULL DEFAULT '',
+
+                Firmware TEXT NOT NULL DEFAULT '',
+
+                ApiType TEXT NOT NULL DEFAULT '',
+
+                UseByDefault INTEGER NOT NULL DEFAULT 1,
+
+                IsOnline INTEGER NOT NULL DEFAULT 0,
+
+                AttendanceRole INTEGER NOT NULL DEFAULT 0
+            );
+
+
+            ------------------------------------------------------------
+            -- IP КОНТРОЛЛЕРА УНИКАЛЕН ВНУТРИ ОБЪЕКТА
+            ------------------------------------------------------------
+
+            CREATE UNIQUE INDEX IF NOT EXISTS
+                UX_Controllers_IpAddress
+            ON Controllers
+            (
+                IpAddress
+            );
+
+
+            ------------------------------------------------------------
+            -- ИНДЕКС ДЛЯ КОНТРОЛЛЕРОВ ПО РОЛИ ПОСЕЩАЕМОСТИ
+            ------------------------------------------------------------
+
+            CREATE INDEX IF NOT EXISTS
+                IX_Controllers_AttendanceRole
+            ON Controllers
+            (
+                AttendanceRole
             );
             """;
 
